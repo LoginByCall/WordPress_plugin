@@ -1,0 +1,33 @@
+.reg_passmail{
+    display: none;
+}
+.phone_mask{font-size: 24px; color: #04ace4; float: left; padding: 13px 4px;}
+.pin_container{
+    background-size:cover; width:100%;}
+.pin_container>div{padding:100px 31px 0;}
+.phone-number {
+    max-width: 300px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    letter-spacing: 2px;
+    border-color: #9b9b9b;
+}
+input[type=tel] {
+    font-size: 24px;
+    width: 100%;
+    padding: 3px;
+    margin: 2px 6px 16px 0;
+}
+.block-description {
+    font-size: 1.2em;
+    line-height: 1.2;
+    background: #04ace4;
+    color: #fff;
+    padding: .6em .8em;
+}
+#call_status{text-align: center; height: 18px;}
+.label_inputMsisdn span{position: relative;}
+.label_inputMsisdn span span{position: absolute; left: -20px; top: -16px; font-size: 24px;}
+.admin_balance div{float: left;}
