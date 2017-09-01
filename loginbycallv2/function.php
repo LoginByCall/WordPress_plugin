@@ -57,7 +57,8 @@ function pay_loginbycall($amount)
 
 function lbc_get_safe($item, $property)
 {
-    if (property_exists($item, $property))
+
+    if (is_object($item)&&property_exists($item, $property))
         return $item->$property;
     else
         return '';
