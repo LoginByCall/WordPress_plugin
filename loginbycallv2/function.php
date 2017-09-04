@@ -76,7 +76,8 @@ function register_loginbycall()
     call_api_id - идентификатор аккаунта LoginByCall api.
     verify_url - адрес для проверки принадлежности домена. Возвращается либо тот, который получен в запросе, либо созданный сервисом LoginByCall автоматически.*/
     $info = service_loginbycall('register', $data);
-    update_option('loginbycall_api_id', $info->call_api_id);
+    if(lbc_get_safe($info,'call_api_id')!='')
+    update_option('loginbycall_api_id', lbc_get_safe($info,'call_api_id'));
     update_option('loginbycall_credential_active',0);
 }
 

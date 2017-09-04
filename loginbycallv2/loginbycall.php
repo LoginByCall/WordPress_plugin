@@ -49,7 +49,11 @@ function loginbycall_change_options()
     if(isset($_POST['loginbycall_update_key_btn'])&&get_option('loginbycall_api_key')!=$_POST['loginbycall_update_key_btn'])
     {
         update_option('loginbycall_api_key', $_POST['api_key']);
-        update_option('loginbycall_api_id',get_option('loginbycall_new_api_id'));
+	    if(get_option('loginbycall_new_api_id'))
+	    {
+		    update_option('loginbycall_api_id',get_option('loginbycall_new_api_id'));
+		    delete_option('loginbycall_new_api_id');
+	    }
         credential_confirm();
     }
 
@@ -86,7 +90,10 @@ function render_settings_loginbycall()
         $balance = balance_loginbycall();
     else
         $balance = 0;
+
     echo '<h2>' . __('LoginByCall Settings', 'loginbycall') . '</h2>';
+	if(get_option('loginbycall_credential_active')!=1)
+	echo '<div class="notice notice-error"><p>'.__( 'Ключи не активны', 'loginbycall' ).'</p></div>';
     echo '<form id="loginbycallupdateform" method="post" action="' . $_SERVER['PHP_SELF'] . '?page=loginbycall&updated=true">';
     echo '<table class="form-table">
 			<tr>
@@ -644,9 +651,13 @@ function loginbycall_form_panel()//при регистрации
 
 function loginbycall_uninstall_hook()
 {
-    delete_option('loginbycall_client_id');
-    delete_option('loginbycall_client_secret');
-    delete_option('loginbycall_mail');
+    delete_option('loginbycall_api_id');
+	delete_option('loginbycall_api_key');
+    delete_option('loginbycall_credential_active');
+    delete_option('loginbycall_new_api_id');
+	delete_option('loginbycall_notification_email');
+	delete_option('loginbycall_register_phone');
+	loginbycall_update_roles(array('_onefactor', '_twofactor'));
 }
 
 register_deactivation_hook(__FILE__, 'loginbycall_uninstall_hook');
