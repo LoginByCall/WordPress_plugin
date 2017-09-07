@@ -106,16 +106,20 @@ function call_status($handler)
     return service_loginbycall('call-status',array('call'=>$handler),true);
 }
 
-function change_credential()
+function change_credential($email=null)
 {
-    $data['admin_email'] = getNotificationEmail();
+    if(isset($email))
+        $data['admin_email'] = $email;
+    else
+        $data['admin_email'] = getNotificationEmail();
     $info = service_loginbycall('change_credential', $data, true);
     $new_api=lbc_get_safe($info, 'call_api_id');
     if($new_api)
     {
+        if(isset($email))
+            setNotificationEmail($email);
         update_option('loginbycall_new_api_id', $new_api);
         update_option('loginbycall_credential_active',0);
-        //credential_confirm();
     }
 
 }

@@ -139,7 +139,7 @@ jQuery(document).ready(function () {
     function getPhone() {
         var msisdn_original = jQuery('#inputMsisdn').val();
         var msisdn = cleanPhone(msisdn_original);
-        if(!msisdn || (msisdn.length<9||msisdn.length>15))
+        if((!msisdn&&jQuery('#inputMsisdn').data('require')==1) || ((msisdn.length<9&&msisdn.length>0)||msisdn.length>15))
             return null;
         return {
             msisdn_original: msisdn_original,
