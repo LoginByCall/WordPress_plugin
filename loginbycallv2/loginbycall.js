@@ -146,10 +146,19 @@ jQuery(document).ready(function () {
             msisdn: msisdn
         };
     }
-
+    jQuery('#loginbycall_user_refuse').change(function() {
+        if (this.checked) {
+            jQuery('#wp-submit').prop('disabled', false);
+        } else {
+            jQuery('#wp-submit').prop('disabled', !getPhone());
+        }
+    });
     jQuery('#inputMsisdn').on('change input propertychange keyup paste', function(evt) {
         jQuery(this).val(cleanPhone(jQuery(this).val()))
-        jQuery('#wp-submit').prop('disabled', !getPhone());
+        if(jQuery("#loginbycall_user_refuse").prop('checked'))
+            jQuery('#wp-submit').prop('disabled', false);
+        else
+            jQuery('#wp-submit').prop('disabled', !getPhone());
     }).trigger('change');
 
     function validate_digit(evt) {

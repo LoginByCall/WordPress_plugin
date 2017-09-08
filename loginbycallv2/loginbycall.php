@@ -242,7 +242,7 @@ function loginbycall_render_login_types($user)
             <label for="user_login_type">
                 <input type="radio" name="loginbycall_user_login_type" id="user_login_type"
                        value="1"<?php echo ($type == 1) ? 'checked="checked"' : ''
-                ?>>Входить без пароля
+                ?>>Простой и безопасный (без пароля)
             </label>
         </div>
     <?php
@@ -254,7 +254,7 @@ function loginbycall_render_login_types($user)
                 <input type="radio" name="loginbycall_user_login_type" id="user_login_type2"
                        value="2"<?php
                 echo ($type == 2) ? 'checked="checked"' : ''
-                ?>>Двухфакторная авторизация
+                ?>>Супербезопасный (двухфакторная)
             </label>
         </div>
     <?
@@ -538,16 +538,17 @@ function loginbycall_login_panel_step1()//подключение если нет
 		</label>
         <input type="hidden" name="step1_form" value="1">
 	    <div class="block-description">Мы позвоним вам со случайного номера,
-запомните последние 4 цифры из него.</div>';
+запомните последние 4 цифры из него.</div>
+<p style="margin: 5px 0;">Выберите способ авторизации:</p>';
         $user = get_user_by('ID', $_SESSION['loginbycall_user_login_id']);
         loginbycall_render_login_types($user);
         ?>
-        <p style="text-align: center;">Вы всегда можете изменить настройки в Профиле</p>
-        <div style="text-align: center;"><label for="loginbycall_user_refuse"><input type="checkbox"
-                                                                                     name="loginbycall_user_refuse"
-                                                                                     id="loginbycall_user_refuse"
-                                                                                     value="1">Больше не
-                предлагать</label></div>
+        <div style="position: absolute; bottom:-48px;">
+        <p style="text-align: center; margin: 0 -18px;">Вы всегда можете изменить настройки в Профиле</p>
+        <div style="text-align: center;"><label for="loginbycall_user_refuse">
+                <input type="checkbox" name="loginbycall_user_refuse" id="loginbycall_user_refuse" value="1">
+                Больше не предлагать</label></div>
+        </div>
         <script>
             var flashError = '<?php echo getFlashError()?>';
         </script>
@@ -583,8 +584,6 @@ function loginbycall_login_panel_step2()
                     $countdown = ceil($phoneCall->additional->delay);
                     $_SESSION['loginbycall_error'] = 'Повторите звонок через ' . $countdown . ' секунд';
                 } else {
-                    var_dump($phoneCall);
-                    die();
                     $_SESSION['loginbycall_error'] = lbc_get_safe($phoneCall, 'reason');
                     wp_safe_redirect('wp-login.php');
                     die();
@@ -809,7 +808,7 @@ function loginbycall_auth_signon($user, $username, $password)
     }
 
     //попадаем сюда с формы для уже зареганых юзеров без телефона
-    if (isset($_REQUEST['step1_form']) && $_REQUEST['step1_form'] == 1) {
+    if (isset($_REQUEST['step1_form']) && $_REQUEST['step1_form'] == 1 &&isset($user_id)) {
         //если отказался то мы логиним по обычному
         if (isset($_REQUEST['loginbycall_user_refuse']) && $_REQUEST['loginbycall_user_refuse'] == 1) {
             update_user_meta($user_id, 'loginbycall_user_refuse', $_REQUEST['loginbycall_user_refuse']);
@@ -849,18 +848,24 @@ function loginbycall_auth_signon($user, $username, $password)
         {
             $refuse = get_user_meta($fuser->ID, 'loginbycall_user_refuse', true);
             $allow = loginbycall_check_allowed_role($fuser->roles);
-            if (get_user_meta($fuser->ID, 'loginbycall_user_login_type', true) == 1 && $allow['_onefactor'] && $refuse != 1 && server_status() == 1) {
+            //если однофакторный, есть доступ, не отказался,статус сервера ок то идем то авторизация по моб
+            if (get_user_meta($fuser->ID, 'loginbycall_user_login_type', true) == 1 && $allow['_onefactor'] && $refuse != 1  && server_status() == 1) {
+                //если телефон пуст то надо кинуть ему предложение
                 $_SESSION['loginbycall_user_login_id'] = $fuser->ID;
-                wp_safe_redirect('wp-login.php?loginbycall_step=2');
+                if(!is_numeric(get_user_meta($fuser->ID, 'loginbycall_user_phone', true)))
+                    wp_safe_redirect('wp-login.php?loginbycall_step=1');
+                else
+                    wp_safe_redirect('wp-login.php?loginbycall_step=2');
                 die();
+
             }
-        }
-        return $user;
+        }//идем проверять пароль
     }
 
     return $user;
 }
-
+//здесь проверям однуфакторную или двухфакторную авторизацию
+//сюда пустой пароль не доходит
 function loginbycall_check_password($check, $password, $hash, $user_id)
 {
 
@@ -875,7 +880,8 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
         if (in_array(true, $allow)) {
             $_SESSION['loginbycall_user_login_id'] = $user_id;
             //если телефон не забит, то надо предложить его забить
-            if (get_user_meta($user_id, 'loginbycall_user_phone', true) == '') {
+
+            if (!is_numeric(get_user_meta($user_id, 'loginbycall_user_phone', true))) {
                 wp_safe_redirect('wp-login.php?loginbycall_step=1');
             } else
                 wp_safe_redirect('wp-login.php?loginbycall_step=2');

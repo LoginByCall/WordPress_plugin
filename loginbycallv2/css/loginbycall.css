@@ -25,7 +25,9 @@ input[type=tel] {
     line-height: 1.2;
     background: #04ace4;
     color: #fff;
-    padding: .6em .8em;
+    padding: .6em 26px;
+    margin: 0 -26px;
+    text-align: center;
 }
 #call_status{text-align: center; height: 18px;}
 .label_inputMsisdn span{position: relative;}
