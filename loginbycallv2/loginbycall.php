@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/function.php';
 add_action('admin_menu', 'add_loginbycall_page');
 function add_loginbycall_page()
 {
-    add_menu_page('LoginByCall', 'LoginByCall', 'manage_options', 'loginbycall', 'loginbycall_options_page', 'dashicons-admin-generic', 1001);
+    add_menu_page('LoginByCall', 'LoginByCall', 'manage_options', 'loginbycall', 'loginbycall_options_page', 'img/logolbc.svg', 1001);
 }
 
 function ajax_login_init()
@@ -543,7 +543,7 @@ function loginbycall_login_panel_step1()//подключение если нет
         $user = get_user_by('ID', $_SESSION['loginbycall_user_login_id']);
         loginbycall_render_login_types($user);
         ?>
-        <div style="position: absolute; bottom:-48px;">
+        <div style="position: absolute; bottom:5px;">
         <p style="text-align: center; margin: 0 -18px;">Вы всегда можете изменить настройки в Профиле</p>
         <div style="text-align: center;"><label for="loginbycall_user_refuse">
                 <input type="checkbox" name="loginbycall_user_refuse" id="loginbycall_user_refuse" value="1">
