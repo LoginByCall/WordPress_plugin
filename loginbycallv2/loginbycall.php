@@ -153,7 +153,7 @@ function render_settings_loginbycall($error)
     foreach (get_editable_roles() as $role_name => $role_info): ?>
         <tr>
             <td></td>
-            <td class="b"><?php echo $role_name ?></td>
+            <td class="b"><?php echo translate_user_role($role_info['name'] ); ?></td>
             <td><input name="loginbycall_<?php echo $role_name ?>_onefactor" type="checkbox"
                        value="1" <?php echo get_option('loginbycall_' . $role_name . '_onefactor') == 1 ? 'checked="checked"' : '' ?>>
             </td>
