@@ -13,7 +13,7 @@ require_once dirname(__FILE__) . '/function.php';
 add_action('admin_menu', 'add_loginbycall_page');
 function add_loginbycall_page()
 {
-    add_menu_page('LoginByCall', 'LoginByCall', 'manage_options', 'loginbycall', 'loginbycall_options_page', 'img/logolbc.svg', 1001);
+    add_menu_page('LoginByCall', 'LoginByCall', 'manage_options', 'loginbycall', 'loginbycall_options_page', plugin_dir_url(__FILE__) .'/img/logolbc.svg', 1001);
 }
 
 function ajax_login_init()
@@ -21,7 +21,6 @@ function ajax_login_init()
     wp_register_script('ajax-login-script', plugin_dir_url(__FILE__) . '/loginbycall.js', array('jquery'));
     wp_enqueue_script('ajax-login-script');
     wp_localize_script('ajax-login-script', 'ajax_login_object', array(
-
         'ajaxurl' => admin_url('admin-ajax.php'),
         'redirecturl' => home_url(),
         'loadingmessage' => __('Sending user info, please wait...')
@@ -41,6 +40,7 @@ function loginbycall_options_page()
 function loginbycall_change_options()
 {
 
+    $error='';
     if (isset($_POST['email_notification']) && $_POST['email_notification'] != getNotificationEmail()) {
 
         change_credential($_POST['email_notification']);
@@ -62,8 +62,18 @@ function loginbycall_change_options()
             $loginbycall_register_phone = $_POST['loginbycall_register_phone'];
         else
             $loginbycall_register_phone = 0;
-        update_option('loginbycall_register_phone', $loginbycall_register_phone);
-        loginbycall_update_roles(array('_onefactor', '_twofactor'));
+
+        //если нет факторов для дефалтной роли и включено обязательный тел
+        if(!isset($_POST['loginbycall_'.get_option('default_role').'_onefactor'])&&!isset($_POST['loginbycall_'.get_option('default_role').'_twofactor'])&&$loginbycall_register_phone==1)
+        {
+            $error='<div class="notice notice-error"><p>' . __('Укажите хотя бы один способ авторизации для роли нового пользователя', 'loginbycall') . '</p></div>';
+        }
+        else
+        {
+            update_option('loginbycall_register_phone', $loginbycall_register_phone);
+            loginbycall_update_roles(array('_onefactor', '_twofactor'));
+        }
+
 
     }
 
@@ -75,12 +85,12 @@ function loginbycall_change_options()
     if (isset($_POST['loginbycall_pay_btn'])) {
         echo pay_loginbycall($_POST['pay']);
     } else
-        render_settings_loginbycall();
+        render_settings_loginbycall($error);
 
     //var_dump(status_loginbycall());
 }
 
-function render_settings_loginbycall()
+function render_settings_loginbycall($error)
 {
     wp_enqueue_script('jquery-ui-dialog'); // jquery and jquery-ui should be dependencies, didn't check though...
     wp_enqueue_style('wp-jquery-ui-dialog');
@@ -89,7 +99,9 @@ function render_settings_loginbycall()
     else
         $balance = 0;
 
+
     echo '<h2>' . __('LoginByCall Settings', 'loginbycall') . '</h2>';
+    echo $error;
     if (get_option('loginbycall_credential_active') != 1)
         echo '<div class="notice notice-error"><p>' . __('Ключи не активны', 'loginbycall') . '</p></div>';
     echo '<form id="loginbycallupdateform" method="post" action="' . $_SERVER['PHP_SELF'] . '?page=loginbycall&updated=true">';
@@ -125,7 +137,7 @@ function render_settings_loginbycall()
 			<td></td>
 			</tr>
 			<tr>
-			<th><label>Требовать ввода телефона при регистрации</label></th>
+			<th><label>Обязательное использование LoginByCall для пользователей</label></th>
 			<td><input name="loginbycall_register_phone" value="1" type="checkbox" ' . (get_option('loginbycall_register_phone') == 1 ? 'checked="checked"' : '') . '></td>
 			<td></td>
 			<td></td>
@@ -223,7 +235,7 @@ function render_settings_loginbycall()
 <?php
 }
 
-function loginbycall_render_login_types($user)
+function loginbycall_render_login_types($user,$olduser=false)
 {
 
     $allow = loginbycall_check_allowed_role($user->roles);
@@ -236,13 +248,18 @@ function loginbycall_render_login_types($user)
         elseif ($allow['_twofactor'])
             $type = 2;
     }
+    if($allow['_onefactor']&&$allow['_twofactor'])
+        $input_type='radio';
+    else
+        $input_type='hidden';
     if ($allow['_onefactor']) {
         ?>
         <div>
             <label for="user_login_type">
-                <input type="radio" name="loginbycall_user_login_type" id="user_login_type"
-                       value="1"<?php echo ($type == 1) ? 'checked="checked"' : ''
-                ?>>Простой и безопасный (без пароля)
+                <input type="<?php echo $input_type ?>" name="loginbycall_user_login_type" id="user_login_type"
+                       value="1" <?php echo ($type == 1&&$input_type!='hidden') ? 'checked="checked"' : ''
+                ?>>
+                <?php echo $olduser?'Подключить простой и безопасный <br>(без пароля)':'Простой и безопасный (без пароля)'?>
             </label>
         </div>
     <?php
@@ -251,13 +268,14 @@ function loginbycall_render_login_types($user)
         ?>
         <div>
             <label for="user_login_type2">
-                <input type="radio" name="loginbycall_user_login_type" id="user_login_type2"
-                       value="2"<?php
-                echo ($type == 2) ? 'checked="checked"' : ''
-                ?>>Супербезопасный (двухфакторная)
+                <input type="<?php echo $input_type ?>" name="loginbycall_user_login_type" id="user_login_type2"
+                       value="2" <?php
+                echo ($type == 2&&$input_type!='hidden') ? 'checked="checked"' : ''
+                ?>>
+                <?php echo $olduser?'Подключить супербезопасный <br>(двухфакторная)':'Супербезопасный (двухфакторная)' ?>
             </label>
         </div>
-    <?
+    <?php
     }
 }
 
@@ -267,41 +285,45 @@ add_action('edit_user_profile', 'my_show_extra_profile_fields');
 
 function my_show_extra_profile_fields($user)
 {
-
+    wp_register_script('iphoneSwitch', plugin_dir_url(__FILE__) . 'iPhoneSwitch-master/jquery.iphoneSwitch.min.js', array('jquery'));
+    wp_enqueue_script('iphoneSwitch');
     ?>
-
     <h3>Настройки простой авторизации «LoginByCall»</h3>
-
     <table class="form-table">
-
+        <?php if(get_option('loginbycall_register_phone')!=1){ ?>
+        <tr>
+            <th><label for="switch">Подключить простую авторизацию LoginByCall</label></th>
+            <td>
+                <input type="checkbox" name="loginbycall_user_activate_setting" value="1" id="switch" class="iphoneSwitch" style="" <?php echo get_user_meta($user->ID,'loginbycall_user_activate_setting',true)==1?'checked':'' ?>>
+                <script>
+                    jQuery(document).ready(function() {
+                        jQuery('.iphoneSwitch').iphoneSwitch('<?php echo get_user_meta($user->ID,'loginbycall_user_activate_setting',true)==1?'on':'off' ?>', function () {
+                        }, function () {
+                        }, {speed: 250,track_img: '<?php echo plugin_dir_url(__FILE__)  ?>iPhoneSwitch-master/images/switch_track.png',handle_img: '<?php echo plugin_dir_url(__FILE__)  ?>iPhoneSwitch-master/images/switch_handle.png'});
+                    });
+                </script>
+            </td>
+        </tr>
+        <?php } ?>
         <tr>
             <th><label for="loginbycall_phone">Телефон</label></th>
-
             <td>
-
                 +<input type="text" name="loginbycall_phone" id="loginbycall_phone"
                         value="<?php echo get_user_meta($user->ID, 'loginbycall_user_phone', true); ?>"
                         class="regular-text"/><br/>
             </td>
         </tr>
+        <?php
+        $allow = loginbycall_check_allowed_role($user->roles);
+        if($allow['_twofactor']&&$allow['_onefactor'])
+        {?>
         <tr>
             <th><label for="loginbycall_user_factor">Входить без пароля</label></th>
             <td>
-                <?php
-                $allow = loginbycall_check_allowed_role($user->roles);
-                $type = get_user_meta($user->ID, 'loginbycall_user_login_type', true);
-                if ($type == false) {
-                    if ($allow['_onefactor'])
-                        $type = 1;
-                    elseif ($allow['_twofactor'])
-                        $type = 2;
-                }
-                ?>
-                <input type="checkbox" name="loginbycall_user_factor" id="loginbycall_user_factor" value="1"
-                    <?php echo $type == 1 ? 'checked' : '' ?>
-                       class="regular-text"/><br/>
+                <?php loginbycall_render_login_types($user); ?>
             </td>
         </tr>
+        <?php }        ?>
     </table>
 <?php
 }
@@ -315,10 +337,9 @@ function my_save_extra_profile_fields($user_id)
     if (!current_user_can('edit_user', $user_id))
         return false;
     update_user_meta($user_id, 'loginbycall_user_phone', $_POST['loginbycall_phone']);
-    if (isset($_POST['loginbycall_user_factor']))
-        $factor = 1;
-    else
-        $factor = 2;
+    update_user_meta($user_id,'loginbycall_user_activate_setting',$_POST['loginbycall_user_activate_setting']);
+    if (isset($_POST['loginbycall_user_login_type']))
+        $factor = $_POST['loginbycall_user_login_type'];
     $user = get_user_by('id', $user_id);
     $allow = loginbycall_check_allowed_role($user->roles);
 
@@ -377,117 +398,6 @@ function prefix_add_my_stylesheet()
     wp_enqueue_style('prefix-style');
 }
 
-/**
- * [loginbycall_settings]
- */
-function function_loginbycall_settings_user($atts)
-{
-
-    global $user_ID;
-    global $user_email;
-    global $wpdb;
-
-    $t = ''; // в $t будет код формы настроек
-
-    if (is_user_logged_in()) { // Если ползователь авторизован
-
-        $table_name = $wpdb->prefix . "loginbycall_user";
-
-        if (count($_POST)) { // если юзер что-то менял в своих настройках
-
-            if (!isset($_POST['user_allowed'])) { // TODO: check this condition. There is no 'user_allowed' input in the form
-                $wpdb->update(
-                    $table_name, array('status' => 0), array('uid' => $user_ID), array('%d'), array('%d')
-                );
-            } else {
-                $wpdb->update(
-                    $table_name, array('status' => 1), array('uid' => $user_ID), array('%d'), array('%d')
-                );
-            }
-
-            if (isset($_POST['user_unbind'])) {
-                $redirect_uri = get_option('loginbycall_redirect_uri');
-                $client_id = get_option('loginbycall_client_id');
-                $client_secret = get_option('loginbycall_client_secret');
-                $refresh_token = get_one_field('refresh_token', $table_name, 'uid', $user_ID);
-                $target_token = get_one_field('target_token', $table_name, 'uid', $user_ID);
-                $context_access = stream_context_create(array(
-                    'http' => array('method' => 'POST',
-                        'header' => 'Content-Type: application/x-www-form-urlencoded' . PHP_EOL,
-                        'content' => "redirect_uri=$redirect_uri&client_id=$client_id&client_secret=$client_secret&grant_type=refresh_token&refresh_token=$refresh_token"
-                    )));
-                $answer = json_decode(@file_get_contents("https://loginbycall.com/oauth/token", false, $context_access));
-
-                $context_access = stream_context_create(array(
-                    'http' => array('method' => 'POST',
-                        'header' => 'Content-Type: application/x-www-form-urlencoded' . PHP_EOL,
-                        'content' => "access_token=$answer->access_token&target_token=$target_token"
-                    )));
-                $answer = json_decode(@file_get_contents("https://loginbycall.com/api/oauth/v2/userinfo/destroy", false, $context_access));
-                $wpdb->delete($table_name, array('uid' => $user_ID));
-            }
-        }
-        // если юзер в таблице loginbycall
-        if (get_one_field('uid', $table_name, 'uid', $user_ID)) {
-
-            $i_user = $wpdb->get_results("SELECT * FROM " . $table_name . " WHERE uid = " . $user_ID); // находим ID юзера в таблице
-            $i_user = $i_user[0];
-
-            if (isset($_SESSION['loginbycall_create_account'])) {
-                unset($_SESSION['loginbycall_create_account']);
-                $t .= '<div class="loginbycall-message">' . __('You account has been successfully created.', 'loginbycall') . '</div>';
-            }
-            if (isset($_SESSION['loginbycall_bind_account'])) {
-                unset($_SESSION['loginbycall_bind_account']);
-                $t .= '<div class="loginbycall-message">' . __('Connected successfully', 'loginbycall') . '</div>';
-            }
-            $t .= '<form action="" method="post" id="loginbycall-user-edit-form" accept-charset="UTF-8">
-					<div>
-						<input type="hidden" name="user_uid" value="1">
-						<div class="form-item form-type-textfield form-item-set-name">
-							<label for="edit-set-name">' . __('User name', 'loginbycall') . '&nbsp;&nbsp;&nbsp;-</label>
-							<label type="text" id="edit-set-name" name="set_name" size="60" maxlength="128" class="form-text required">' . $i_user->login . '</label>
-						</div>
-						<div class="form-item form-type-textfield form-item-set-name">
-							<label for="edit-set-name">' . __('User mail', 'loginbycall') . '&nbsp;&nbsp;&nbsp;-</label>
-							<label type="text" id="edit-set-name" name="set_name" size="60" maxlength="128" class="form-text required">' . $user_email . '</label>
-						</div>
-						';
-            if (get_option('loginbycall_resolution')) { // Option "allow users to control the input and destroy account of service LoginByCall" is on
-                $t .= '<div class="form-item form-type-checkbox form-item-user-unbind">
-						<input type="checkbox" id="edit-user-unbind" name="user_unbind" value="1" class="form-checkbox">
-						<label class="option" for="edit-user-unbind">' . __('Unbind', 'loginbycall') . '</label>
-						<div class="description">' . __('Unbind account loginbycall', 'loginbycall') . '</div>
-					</div>';
-            }
-            $t .= '<input type="hidden" name="form_id" value="loginbycall_user_edit_form">
-				<input type = "submit" id = "edit-submit" name = "loginbycall-user-edit-form" value = "Submit" class = "form-submit">
-					</div>
-				</form>';
-            $t .= '</br><a href="https://loginbycall.com/users/home#/dashboard/settings" target="_blank">' . __('My settings LoginByCall', 'loginbycall') . '</a>';
-        } else { //если пользователя нет в таблице то показать ему ссобшение с ссылкой на создание связи
-
-            $ud = get_userdata($user_ID);
-
-            echo '
-		<script>
-		function openWindow() {
-if (window.myWin !== undefined) { window.myWin.focus(); }
-		var leftvar = (screen.width-600)/2;
-		var topvar = (screen.height-460)/2;
-		myWin = window.open("' . loginbycall_create_link($ud->user_login) . '", "displayWindow", "width=600,height=460,left="+leftvar+",top="+topvar+",status=no,toolbar=no,menubar=no");
-		}
-</script>';
-
-            $t = __('This site provides users through the service entrance LoginByCall. At this point, your account is not tied to the service. To add a convenient entrance to the site through the service LoginByCall follow the link below:', 'loginbycall')
-                . '<br/><a href="#" onclick="openWindow(); return false;" >' . __('Bind your account', 'loginbycall') . '</a>';
-        }
-        return $t;
-    } else {
-        return __('You are not allowed to access this page.', 'loginbycall');
-    }
-}
-
 add_shortcode('loginbycall_settings', 'function_loginbycall_settings_user');
 
 
@@ -510,7 +420,7 @@ function cp_admin_init()
     }
 }
 
-function loginbycall_login_panel_step1()//подключение если нету
+function loginbycall_login_panel_step1()//подключение если нету Для старых юзеров
 {
     $allow = false;
     if (isset($_SESSION['loginbycall_user_login_id'])) {
@@ -533,22 +443,28 @@ function loginbycall_login_panel_step1()//подключение если нет
 </p>
 		<label class="label_inputMsisdn" for="user_phone">Телефон<br>
 		<span><span>+</span>
-		<input data-require="1" data-filled="false" id="inputMsisdn" class="form-control input-lg phone-number text-center" type="tel" name="loginbycall_phone" placeholder="___________" value="" maxlength="15">
+		<input '.(get_option('loginbycall_register_phone')==1?'data-require="1"':'').' data-filled="false" id="inputMsisdn" class="form-control input-lg phone-number text-center" type="tel" name="loginbycall_phone" placeholder="___________" value="" maxlength="15">
 		</span>
 		</label>
         <input type="hidden" name="step1_form" value="1">
 	    <div class="block-description">Мы позвоним вам со случайного номера,
-запомните последние 4 цифры из него.</div>
-<p style="margin: 5px 0;">Выберите способ авторизации:</p>';
+запомните последние 4 цифры из него.</div>';
         $user = get_user_by('ID', $_SESSION['loginbycall_user_login_id']);
-        loginbycall_render_login_types($user);
+        $allow = loginbycall_check_allowed_role($user->roles);
+        if($allow['_twofactor']&&$allow['_onefactor'])
+            echo '<p style="margin: 5px 0;">Выберите способ авторизации:</p>';
+
+        loginbycall_render_login_types($user,$olduser=true);
+        if(get_option('loginbycall_register_phone')!=1)
+        { ?>
+            <div style="position: absolute; bottom:5px;">
+                <div style="text-align: center;"><label for="loginbycall_user_refuse">
+                        <input type="checkbox" name="loginbycall_user_refuse" id="loginbycall_user_refuse" value="1">
+                        Больше не предлагать</label></div>
+            </div>
+        <?php }
         ?>
-        <div style="position: absolute; bottom:5px;">
-        <p style="text-align: center; margin: 0 -18px;">Вы всегда можете изменить настройки в Профиле</p>
-        <div style="text-align: center;"><label for="loginbycall_user_refuse">
-                <input type="checkbox" name="loginbycall_user_refuse" id="loginbycall_user_refuse" value="1">
-                Больше не предлагать</label></div>
-        </div>
+
         <script>
             var flashError = '<?php echo getFlashError()?>';
         </script>
@@ -558,9 +474,6 @@ function loginbycall_login_panel_step1()//подключение если нет
     }
 }
 
-function loginbycall_login_head_panel_step2()
-{
-}
 
 //тут обращение к апи по номеру телефона и делаем прозвон
 function loginbycall_login_panel_step2()
@@ -573,7 +486,7 @@ function loginbycall_login_panel_step2()
     if ($fuser) {
         $allow = loginbycall_check_allowed_role($fuser->roles);
         if (in_array(true, $allow)) {
-            $phone = get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_phone', true);
+            $phone = get_user_meta($fuser->ID, 'loginbycall_user_phone', true);
             //звонить только если время вышло, если ввели неправильно звонить не надо, но маску выводить
             //если лимиты вышли позвонить, чтобы попасть на главную с ошибкой
 
@@ -637,7 +550,7 @@ function loginbycall_login_panel_step2()
                 var _countDown = <?php echo $countdown ?>;
                 var flashError = '<?php echo getFlashError()?>';
             </script>
-        <?
+        <?php
         }
     }
 
@@ -703,10 +616,8 @@ add_action('wp_ajax_nopriv_verify_logincall', 'verify_logincall');
 add_action('wp_ajax_verify_logincall', 'verify_logincall');
 function verify_logincall()
 {
-
     echo get_option('loginbycall_api_id');
     die();
-
 }
 
 
@@ -749,7 +660,11 @@ function verify_logincall_pin()
             $_SESSION['loginbycall_count_login'] = 0;
             wp_set_auth_cookie($_SESSION['loginbycall_user_login_id']);
             if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', true) != 1)
+            {
+                update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', 1);
                 update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', 1);
+            }
+
             unset($_SESSION['loginbycall_user_login_id']);
             $data = array('redirect' => 1);
         } else {
@@ -776,7 +691,7 @@ add_filter('authenticate', 'loginbycall_auth_signon', 10, 3);
 
 function loginbycall_auth_signon($user, $username, $password)
 {
-    //сама авторизация по протоколу
+    //сама авторизация по протоколу работает без js, сюда реально не заходят
     if (isset($_SESSION['loginbycall_user_login_id']) && isset($_POST['loginbycall_call_maskphone'])) {
 
         $_SESSION['loginbycall_count_login']++;
@@ -807,10 +722,13 @@ function loginbycall_auth_signon($user, $username, $password)
         $user_id = $_SESSION['loginbycall_user_login_id'];
     }
 
-    //попадаем сюда с формы для уже зареганых юзеров без телефона
-    if (isset($_REQUEST['step1_form']) && $_REQUEST['step1_form'] == 1 &&isset($user_id)) {
+    //попадаем сюда с формы для уже зареганых юзеров без телефона, а так же проверяем от двухфакторной авторизации сессия
+
+    if (isset($_REQUEST['step1_form']) && $_REQUEST['step1_form'] == 1 &&isset($user_id)&&isset($_SESSION['loginbycall_user_login_id_safe'])&&$_SESSION['loginbycall_user_login_id_safe']) {
         //если отказался то мы логиним по обычному
-        if (isset($_REQUEST['loginbycall_user_refuse']) && $_REQUEST['loginbycall_user_refuse'] == 1) {
+        //отказаться можно только если нет обязаловки и не отказывались раньше
+        if (isset($_REQUEST['loginbycall_user_refuse']) && $_REQUEST['loginbycall_user_refuse'] == 1&&
+            get_option('loginbycall_register_phone') != 1&&get_user_meta($user_id,'loginbycall_user_refuse')!=1 ){
             update_user_meta($user_id, 'loginbycall_user_refuse', $_REQUEST['loginbycall_user_refuse']);
             unset($_SESSION['loginbycall_user_login_id']);
             wp_set_auth_cookie($user_id);
@@ -849,9 +767,10 @@ function loginbycall_auth_signon($user, $username, $password)
             $refuse = get_user_meta($fuser->ID, 'loginbycall_user_refuse', true);
             $allow = loginbycall_check_allowed_role($fuser->roles);
             //если однофакторный, есть доступ, не отказался,статус сервера ок то идем то авторизация по моб
-            if (get_user_meta($fuser->ID, 'loginbycall_user_login_type', true) == 1 && $allow['_onefactor'] && $refuse != 1  && server_status() == 1) {
+            if (get_user_meta($fuser->ID, 'loginbycall_user_login_type', true) == 1 && $allow['_onefactor'] && ($refuse != 1||get_option('loginbycall_register_phone') == 1)   && server_status() == 1) {
                 //если телефон пуст то надо кинуть ему предложение
                 $_SESSION['loginbycall_user_login_id'] = $fuser->ID;
+                $_SESSION['loginbycall_user_login_id_safe'] = false;
                 if(!is_numeric(get_user_meta($fuser->ID, 'loginbycall_user_phone', true)))
                     wp_safe_redirect('wp-login.php?loginbycall_step=1');
                 else
@@ -869,7 +788,8 @@ function loginbycall_auth_signon($user, $username, $password)
 function loginbycall_check_password($check, $password, $hash, $user_id)
 {
 
-    if (get_user_meta($user_id, 'loginbycall_user_refuse', true) == 1)//если юзер отказался то обычная проверки
+    //если отказался и не стоит обязательного тела то проходим авторизацию
+    if (get_user_meta($user_id, 'loginbycall_user_refuse', true) == 1 && get_option('loginbycall_register_phone') != 1)//если юзер отказался то обычная проверки
         return $check;
 
     //пароль прошел и хватает прав лезть дальше
@@ -879,6 +799,7 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
         $allow = loginbycall_check_allowed_role($user->roles);
         if (in_array(true, $allow)) {
             $_SESSION['loginbycall_user_login_id'] = $user_id;
+            $_SESSION['loginbycall_user_login_id_safe'] = true;
             //если телефон не забит, то надо предложить его забить
 
             if (!is_numeric(get_user_meta($user_id, 'loginbycall_user_phone', true))) {
@@ -912,13 +833,19 @@ function loginbycall_registration_save($user_id)
 {
     if (isset($_POST['loginbycall_user_phone'])) {
         update_user_meta($user_id, 'loginbycall_user_phone', $_POST['loginbycall_user_phone']);
+        if(($_POST['loginbycall_user_phone'])!='')
+        {
+            update_user_meta($user_id, 'loginbycall_user_activate_setting', 1);
+            update_user_meta($user_id, 'loginbycall_user_active', 0);//активируеться при успешном логине
+            wp_schedule_single_event(time() + 60 * 60 * 24, 'loginbycall_delete_users', array($user_id));
+        }
+
     }
     $_SESSION['loginbycall_user_login_id'] = $user_id;
-    update_user_meta($user_id, 'loginbycall_user_active', 0);
-    wp_schedule_single_event(time() + 60 * 60 * 24, 'loginbycall_delete_users', array($user_id));
+
     if (isset($_POST['loginbycall_user_login_type']))
         update_user_meta($user_id, 'loginbycall_user_login_type', $_POST['loginbycall_user_login_type']);
-    if (server_status() == 1) {
+    if (server_status() == 1&&get_user_meta($user_id, 'loginbycall_user_activate_setting', true)==1) {
         if (get_option('loginbycall_subscriber_onefactor') == 1) {
             wp_safe_redirect('wp-login.php?loginbycall_step=2');
             die();

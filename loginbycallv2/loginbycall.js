@@ -150,6 +150,7 @@ jQuery(document).ready(function () {
         if (this.checked) {
             jQuery('#wp-submit').prop('disabled', false);
         } else {
+
             jQuery('#wp-submit').prop('disabled', !getPhone());
         }
     });
@@ -162,11 +163,9 @@ jQuery(document).ready(function () {
     }).trigger('change');
 
     function validate_digit(evt) {
-
     }
 
     function setError(error) {
-
         jQuery('#login h1').after('<div id="login_error">'+error+'</div>');
     }
     if(typeof flashError !== 'undefined'&&flashError !=='')
