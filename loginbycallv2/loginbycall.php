@@ -63,16 +63,13 @@ function loginbycall_change_options()
         else
             $loginbycall_register_phone = 0;
 
-        //если нет факторов для дефалтной роли и включено обязательный тел
-        if(!isset($_POST['loginbycall_'.get_option('default_role').'_onefactor'])&&!isset($_POST['loginbycall_'.get_option('default_role').'_twofactor'])&&$loginbycall_register_phone==1)
+        //если нет факторов для ролей и включено обязательный тел
+        if(loginbycall_update_roles(array('_onefactor', '_twofactor'),$loginbycall_register_phone))
         {
-            $error='<div class="notice notice-error"><p>' . __('Укажите хотя бы один способ авторизации для роли нового пользователя', 'loginbycall') . '</p></div>';
+            $error='<div class="notice notice-error"><p>' . __('Укажите хотя бы один способ авторизации для всех ролей пользователей', 'loginbycall') . '</p></div>';
         }
         else
-        {
             update_option('loginbycall_register_phone', $loginbycall_register_phone);
-            loginbycall_update_roles(array('_onefactor', '_twofactor'));
-        }
 
 
     }
@@ -725,11 +722,11 @@ function loginbycall_auth_signon($user, $username, $password)
     //попадаем сюда с формы для уже зареганых юзеров без телефона, а так же проверяем от двухфакторной авторизации сессия
 
     if (isset($_REQUEST['step1_form']) && $_REQUEST['step1_form'] == 1 &&isset($user_id)&&isset($_SESSION['loginbycall_user_login_id_safe'])&&$_SESSION['loginbycall_user_login_id_safe']) {
-        //если отказался то мы логиним по обычному
+        //если отказался или телефон пустой то мы логиним по обычному
         //отказаться можно только если нет обязаловки и не отказывались раньше
-        if (isset($_REQUEST['loginbycall_user_refuse']) && $_REQUEST['loginbycall_user_refuse'] == 1&&
-            get_option('loginbycall_register_phone') != 1&&get_user_meta($user_id,'loginbycall_user_refuse')!=1 ){
-            update_user_meta($user_id, 'loginbycall_user_refuse', $_REQUEST['loginbycall_user_refuse']);
+        if (((isset($_REQUEST['loginbycall_user_refuse']) && $_REQUEST['loginbycall_user_refuse'] == 1)||$_REQUEST['loginbycall_phone']=='')&&
+            get_option('loginbycall_register_phone') != 1&&get_user_meta($user_id,'loginbycall_user_refuse',true)!=1 ){
+            update_user_meta($user_id, 'loginbycall_user_refuse', isset($_REQUEST['loginbycall_user_refuse'])?$_REQUEST['loginbycall_user_refuse']:0);
             unset($_SESSION['loginbycall_user_login_id']);
             wp_set_auth_cookie($user_id);
             wp_safe_redirect('/wp-admin/');

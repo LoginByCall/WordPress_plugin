@@ -228,16 +228,31 @@ function loginbycall_check_allowed_role($user_roles)
     return $allow;
 }
 
-function loginbycall_update_roles($factors)
+function loginbycall_update_roles($factors,$loginbycall_register_phone)
 {
+    $error=false;
+    $roles_count=array();
     foreach ($factors as $factor)
         foreach (get_editable_roles() as $role_name => $role_info) {
-
             if (isset($_POST['loginbycall_' . $role_name . $factor]))
+            {
+                if($loginbycall_register_phone==1)
+                {
+                    if(!isset($roles_count[$role_name]))
+                        $roles_count[$role_name]=1;
+                }
                 update_option('loginbycall_' . $role_name . $factor, $_POST['loginbycall_' . $role_name . $factor]);
+            }
             else
                 delete_option('loginbycall_' . $role_name . $factor);
         }
+    if($loginbycall_register_phone==1)
+    foreach (get_editable_roles() as $role_name => $role_info) {
+        if(!isset($roles_count[$role_name]))
+            return $error=true;
+    }
+    return $error;
+
 }
 
 function getFlashError()
