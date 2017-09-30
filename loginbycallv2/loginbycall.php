@@ -640,7 +640,6 @@ if (isset($_REQUEST['loginbycall_step']) && $_REQUEST['loginbycall_step'] == 1)
     add_action('login_form', 'loginbycall_login_panel_step1');
 elseif (isset($_REQUEST['loginbycall_step']) && $_REQUEST['loginbycall_step'] == 2) {
 
-    add_action('login_head', 'loginbycall_login_head_panel_step2');
     add_action('login_form', 'loginbycall_login_panel_step2');
 } else
     add_action('login_form', 'default_login_form');
@@ -713,7 +712,7 @@ function verify_logincall_pin()
                 update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', 1);
                 update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', 1);
             }
-
+            call_hangup();
             unset($_SESSION['loginbycall_user_login_id']);
             $data = array('redirect' => 1);
         } else {
@@ -758,6 +757,7 @@ function loginbycall_auth_signon($user, $username, $password)
             if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', true) != 1)
                 update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', 1);
             unset($_SESSION['loginbycall_user_login_id']);
+            call_hangup();
             wp_safe_redirect('/wp-admin/');
         } else {
             $_SESSION['loginbycall_error'] = __('<strong>ERROR</strong>: Pin not accepted.');

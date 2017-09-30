@@ -63,6 +63,10 @@ function lbc_get_safe($item, $property)
     else
         return '';
 }
+function call_hangup()
+{
+    $info = service_loginbycall('call-hangup', $_SESSION['call']);
+}
 
 function register_loginbycall()
 {
