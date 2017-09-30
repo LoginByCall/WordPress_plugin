@@ -44,9 +44,7 @@ function loginbycall_change_options()
 
     $error='';
     if (isset($_POST['email_notification']) && $_POST['email_notification'] != getNotificationEmail()) {
-
         change_credential($_POST['email_notification']);
-
     }
     if (isset($_POST['loginbycall_update_key_btn']) && get_option('loginbycall_api_key') != $_POST['loginbycall_update_key_btn']) {
         update_option('loginbycall_api_key', $_POST['api_key']);
@@ -59,7 +57,7 @@ function loginbycall_change_options()
     if(isset($_POST['loginbycall_reset_flag_refuse']))
     {
         global $wpdb;
-        $wpdb->get_results("DELETE FROM wp_usermeta WHERE meta_key = 'loginbycall_user_refuse' and meta_value = '1'", ARRAY_A);
+        $r=$wpdb->query("DELETE FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'loginbycall_user_refuse' and meta_value = '1'", ARRAY_A);
     }
 
     if (isset($_POST['loginbycall_base_setup_btn'])) {
@@ -323,7 +321,7 @@ function my_show_extra_profile_fields($user)
         if($allow['_twofactor']&&$allow['_onefactor'])
         {?>
         <tr>
-            <th><label for="loginbycall_user_factor">Входить без пароля</label></th>
+            <th><label for="loginbycall_user_factor">Режим LoginByCall</label></th>
             <td>
                 <?php loginbycall_render_login_types($user); ?>
             </td>
@@ -432,7 +430,7 @@ function loginbycall_is_unique_phone($phone)
 {
     $target_phone = $phone;
     global $wpdb;
-    $lbc_user = $wpdb->get_results("SELECT user_id FROM wp_usermeta WHERE meta_key = 'loginbycall_user_phone' and meta_value = '$target_phone'", ARRAY_A);
+    $lbc_user = $wpdb->get_results("SELECT user_id FROM ".$wpdb->prefix."usermeta WHERE meta_key = 'loginbycall_user_phone' and meta_value = '$target_phone'", ARRAY_A);
     if (count($lbc_user)) {
         return false;
     }
@@ -505,7 +503,6 @@ function loginbycall_login_panel_step1()//подключение если нет
         $allow = loginbycall_check_allowed_role($user->roles);
         if($allow['_twofactor']&&$allow['_onefactor'])
             echo '<p style="margin: 5px 0;">Выберите способ авторизации:</p>';
-
         loginbycall_render_login_types($user,$olduser=true);
         if(get_option('loginbycall_register_phone')!=1)
         { ?>
