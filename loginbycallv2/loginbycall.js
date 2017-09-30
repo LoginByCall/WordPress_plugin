@@ -41,7 +41,7 @@ jQuery(document).ready(function () {
             var seconds = countDown - Math.floor(diff / 1000);
             if (seconds <= 0) {
                 clearInterval(counter);
-                document.getElementById('countdowntext').innerHTML = '<a class=\"button-recall\" href=\"wp-login.php?loginbycall_step=2\">Повторить звонок</a>';
+                document.getElementById('countdowntext').innerHTML = '<a class=\"button-recall\" href=\"?loginbycall_step=2\">Повторить звонок</a>';
             } else {
                 document.getElementById('countdowntext').innerHTML = 'Повторить звонок через <span>'
                 + seconds + '</span>&nbsp;секунд';
@@ -84,6 +84,12 @@ jQuery(document).ready(function () {
 
         jQuery('#loginform').on('submit', function (e) {
             e.preventDefault();
+            verify_pin();
+        });
+
+        function verify_pin()
+        {
+            console.log(no_submit);
             if (no_submit)
                 return;
             var code = getCode();
@@ -95,26 +101,29 @@ jQuery(document).ready(function () {
             jQuery.post( "/wp-admin/admin-ajax.php?action=verify_logincall_pin",
                 {loginbycall_call_maskphone:code}).done(function( data ) {
                     no_submit = false;
-                    if(data.redirect!=1)
+                    if(data.redirect==0)
                     {
                         if(data.error.length>0)
                             setError(data.error);
                     }
-                    else
+                    else if(data.redirect==1) {
+                        window.location = 'wp-admin';
+                    }
+                    else if(data.redirect==2)
                     {
-                        window.location='wp-admin';
-                        //jQuery('#loginform').submit();
+                        location.reload();
                     }
 
-            });
-        });
+                });
+        }
 
         codeInput().on('change input propertychange keyup paste', function () {
 
             var haveCode = getCode();
             jQuery('#wp-submit').prop('disabled', !haveCode);
+
             if (haveCode) {
-                jQuery('#wp-submit').trigger('click');
+                verify_pin();
             }
         }).trigger('change');
 
@@ -124,7 +133,7 @@ jQuery(document).ready(function () {
         function status_call(){
             jQuery.post( "/wp-admin/admin-ajax.php?action=call_status_ajax",
                 {}).done(function( data ) {
-                    console.log(data);
+                    //console.log(data);
                     if(data.id>=4)
                         clearInterval(call_intervall);
                     jQuery('#call_status').html(data.textMsg);
@@ -166,7 +175,7 @@ jQuery(document).ready(function () {
     }
 
     function setError(error) {
-        jQuery('#login h1').after('<div id="login_error">'+error+'</div>');
+        jQuery('#login h1, #loginbycall-dialog .errors').after('<div id="login_error" class="notice notice-error">'+error+'</div>');
     }
     if(typeof flashError !== 'undefined'&&flashError !=='')
         setError(flashError)

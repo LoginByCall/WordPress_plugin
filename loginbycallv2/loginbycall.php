@@ -8,9 +8,7 @@
   Author: 0
   Author URI: 0
  */
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
 require_once dirname(__FILE__) . '/function.php';
 add_action('admin_menu', 'add_loginbycall_page');
 function add_loginbycall_page()
@@ -79,10 +77,7 @@ function loginbycall_change_options()
 
     }
 
-    if (isset($_POST['loginbycall_delete_info'])) {
-        require_once dirname(__FILE__) . '/template/delete-info.tpl.php';
-        echo '<link href="' . plugins_url('css/loginbycall.css', __FILE__) . '" rel="stylesheet" type="text/css" />';
-    }
+
     //рендер формы настроек LoginByCall
     if (isset($_POST['loginbycall_pay_btn'])) {
         echo pay_loginbycall($_POST['pay']);
@@ -292,8 +287,11 @@ add_action('edit_user_profile', 'my_show_extra_profile_fields');
 
 function my_show_extra_profile_fields($user)
 {
-    wp_register_script('iphoneSwitch', plugin_dir_url(__FILE__) . 'iPhoneSwitch-master/jquery.iphoneSwitch.min.js', array('jquery'));
-    wp_enqueue_script('iphoneSwitch');
+    wp_enqueue_script('jquery-ui-dialog'); // jquery and jquery-ui should be dependencies, didn't check though...
+    wp_enqueue_style('wp-jquery-ui-dialog');
+    wp_register_script('ajax-login-script', plugin_dir_url(__FILE__) . '/loginbycall.js', array('jquery'));
+    wp_enqueue_script('ajax-login-script');
+    wp_enqueue_style('custom-login', plugin_dir_url(__FILE__) . '/css/loginbycall.css');
     ?>
     <h3>Настройки простой авторизации «LoginByCall»</h3>
     <table class="form-table">
@@ -328,6 +326,53 @@ function my_show_extra_profile_fields($user)
         </tr>
         <?php }        ?>
     </table>
+    <?php
+    if(isset( $_SESSION['loginbycall_user_new_phone']))
+    { ?>
+    <div id="loginbycall-dialog" class="hidden" style="">
+        <div class="errors"></div>
+        <?php render_pin_form($user,$_SESSION['loginbycall_user_new_phone']); ?>
+            <p class="submit">
+                <input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large" value="потвердить" disabled="">
+            </p>
+    </div>
+    <script>jQuery(document).ready(function (e) {
+
+            // initalise the dialog
+            jQuery("#loginbycall-dialog").dialog({
+                title: "Подтверждение",
+                dialogClass: "wp-dialog",
+                autoOpen: true,
+                draggable: false,
+                width: "auto",
+                modal: true,
+                resizable: false,
+                closeOnEscape: true,
+                position: {
+                    my: "center",
+                    at: "center",
+                    of: window
+                },
+                open: function () {
+                    // close dialog by clicking the overlay behind it
+                    jQuery(".ui-widget-overlay").bind("click", function () {
+                        jQuery("#my-dialog").dialog("close");
+                    })
+                },
+                create: function () {
+                    // style fix for WordPress admin
+                    jQuery(".ui-dialog-titlebar-close").addClass("ui-button");
+                }
+            }).on('dialogclose', function (event) {
+                jQuery.post("<?php echo get_site_url(); ?>/wp-admin/admin-ajax.php?action=loginbycall_close_phone_change", function (data) {
+
+                });
+            });
+            jQuery("#my-dialog").dialog("open");
+            // bind a button or a link to open the dialog
+
+        });</script>
+        <?php } ?>
     <style>
         .cmn-toggle {
             position: absolute;
@@ -388,7 +433,12 @@ function my_save_extra_profile_fields($user_id)
 
     if (!current_user_can('edit_user', $user_id))
         return false;
-    update_user_meta($user_id, 'loginbycall_user_phone', $_POST['loginbycall_phone']);
+    $old_phone=get_user_meta($user_id, 'loginbycall_user_phone',true);
+    if(is_numeric($_POST['loginbycall_phone'])&&$$old_phone!=$_POST['loginbycall_phone'])
+    {
+        $_SESSION['loginbycall_user_new_phone']=$_POST['loginbycall_phone'];
+    }
+    //update_user_meta($user_id, 'loginbycall_user_phone', $_POST['loginbycall_phone']);
     update_user_meta($user_id,'loginbycall_user_activate_setting',$_POST['loginbycall_user_activate_setting']);
     if (isset($_POST['loginbycall_user_login_type']))
         $factor = $_POST['loginbycall_user_login_type'];
@@ -523,6 +573,79 @@ function loginbycall_login_panel_step1()//подключение если нет
     }
 }
 
+function render_pin_form($fuser,$phone)
+{
+    $allow = loginbycall_check_allowed_role($fuser->roles);
+    if (in_array(true, $allow)) {
+
+        //звонить только если время вышло, если ввели неправильно звонить не надо, но маску выводить
+        //если лимиты вышли позвонить, чтобы попасть на главную с ошибкой
+
+
+        $phoneCall = call_loginbycall($phone);
+        if (lbc_get_safe($phoneCall, 'reason') != '') {
+            if (lbc_get_safe($phoneCall, 'error') == 'CALL_REPEAT_TIMEOUT') {
+                $countdown = ceil($phoneCall->additional->delay);
+                $_SESSION['loginbycall_error'] = 'Повторите звонок через ' . $countdown . ' секунд';
+            } else {
+                $_SESSION['loginbycall_error'] = lbc_get_safe($phoneCall, 'reason');
+                wp_safe_redirect('wp-login.php');
+                die();
+            }
+
+        } else//все ок звонок пошел
+        {
+            $_SESSION['call'] = lbc_get_safe($phoneCall, 'call');
+            $_SESSION['loginbycall_count_login'] = 0;
+            $_SESSION['loginbycall_mask_check'] = substr(lbc_get_safe($phoneCall, 'mask'), -lbc_get_safe($phoneCall, 'codelen'));
+            $_SESSION['loginbycall_phone_mask'] = substr(lbc_get_safe($phoneCall, 'mask'), 0, strlen(lbc_get_safe($phoneCall, 'mask')) - lbc_get_safe($phoneCall, 'codelen'));
+            $countdown = lbc_get_safe($phoneCall, 'repeat_timeout');
+        }
+        ?>
+        <p style="text-align: center; padding: 5px; font-size: 15px;">Ваш номер: +<?php echo $phone ?></p>
+        <div class="pin_container"
+             style="background-image:url('<?php echo plugin_dir_url(__FILE__) ?>/img/phone.svg');">
+            <div>
+                <div
+                    class="phone_mask"><?php echo '+' . (isset($_SESSION['loginbycall_phone_mask']) ? $_SESSION['loginbycall_phone_mask'] : '') ?></div>
+                <input type="phone" name="loginbycall_call_maskphone" id="user_mask" class="input" value="" size="4"
+                       maxlength="4" style="width:initial;">
+            </div>
+        </div>
+
+        <div class="block-description">
+            Введите последние 4 цифры
+            номера с которого мы вам звоним
+        </div>
+        <div id="call_status"></div>
+        <div id="countdowntext">Повторить через  <?php echo $countdown ?> секунд</div>
+        <style>
+            #login p label {
+                display: none;
+            }
+
+            #countdowntext {
+                text-align: center;
+            }
+
+            p.submit {
+                text-align: center;
+                margin-top: 5px !important;
+            }
+
+            p.submit input {
+                float: none !important;
+            }
+        </style>
+        <script>
+            var _countDown = <?php echo $countdown ?>;
+            var flashError = '<?php echo getFlashError()?>';
+            var loginUrl ='<?php echo wp_login_url() ?>';
+        </script>
+    <?php
+    }
+}
+
 
 //тут обращение к апи по номеру телефона и делаем прозвон
 function loginbycall_login_panel_step2()
@@ -533,74 +656,8 @@ function loginbycall_login_panel_step2()
     else
         $fuser = false;
     if ($fuser) {
-        $allow = loginbycall_check_allowed_role($fuser->roles);
-        if (in_array(true, $allow)) {
-            $phone = get_user_meta($fuser->ID, 'loginbycall_user_phone', true);
-            //звонить только если время вышло, если ввели неправильно звонить не надо, но маску выводить
-            //если лимиты вышли позвонить, чтобы попасть на главную с ошибкой
+        render_pin_form($fuser,get_user_meta($fuser->ID, 'loginbycall_user_phone', true));
 
-
-            $phoneCall = call_loginbycall($phone);
-            if (lbc_get_safe($phoneCall, 'reason') != '') {
-                if (lbc_get_safe($phoneCall, 'error') == 'CALL_REPEAT_TIMEOUT') {
-                    $countdown = ceil($phoneCall->additional->delay);
-                    $_SESSION['loginbycall_error'] = 'Повторите звонок через ' . $countdown . ' секунд';
-                } else {
-                    $_SESSION['loginbycall_error'] = lbc_get_safe($phoneCall, 'reason');
-                    wp_safe_redirect('wp-login.php');
-                    die();
-                }
-
-            } else//все ок звонок пошел
-            {
-                $_SESSION['call'] = lbc_get_safe($phoneCall, 'call');
-                $_SESSION['loginbycall_count_login'] = 0;
-                $_SESSION['loginbycall_mask_check'] = substr(lbc_get_safe($phoneCall, 'mask'), -lbc_get_safe($phoneCall, 'codelen'));
-                $_SESSION['loginbycall_phone_mask'] = substr(lbc_get_safe($phoneCall, 'mask'), 0, strlen(lbc_get_safe($phoneCall, 'mask')) - lbc_get_safe($phoneCall, 'codelen'));
-                $countdown = lbc_get_safe($phoneCall, 'repeat_timeout');
-            }
-            ?>
-            <p style="text-align: center; padding: 5px; font-size: 15px;">Ваш номер: +<?php echo $phone ?></p>
-            <div class="pin_container"
-                 style="background-image:url('<?php echo plugin_dir_url(__FILE__) ?>/img/phone.svg');">
-                <div>
-                    <div
-                        class="phone_mask"><?php echo '+' . (isset($_SESSION['loginbycall_phone_mask']) ? $_SESSION['loginbycall_phone_mask'] : '') ?></div>
-                    <input type="phone" name="loginbycall_call_maskphone" id="user_mask" class="input" value="" size="4"
-                           maxlength="4" style="width:initial;">
-                </div>
-            </div>
-
-            <div class="block-description">
-                Введите последние 4 цифры
-                номера с которого мы вам звоним
-            </div>
-            <div id="call_status"></div>
-            <div id="countdowntext">Повторить через  <?php echo $countdown ?> секунд</div>
-            <style>
-                #login p label {
-                    display: none;
-                }
-
-                #countdowntext {
-                    text-align: center;
-                }
-
-                p.submit {
-                    text-align: center;
-                    margin-top: 5px !important;
-                }
-
-                p.submit input {
-                    float: none !important;
-                }
-            </style>
-            <script>
-                var _countDown = <?php echo $countdown ?>;
-                var flashError = '<?php echo getFlashError()?>';
-            </script>
-        <?php
-        }
     }
 
 }
@@ -687,14 +744,23 @@ function call_status_ajax()
     die();
 }
 
+add_action('wp_ajax_loginbycall_close_phone_change', 'loginbycall_close_phone_change');
+function loginbycall_close_phone_change()
+{
+    unset($_SESSION['loginbycall_user_new_phone']);
+}
+
+
 add_action('wp_ajax_nopriv_verify_logincall_pin', 'verify_logincall_pin');
+add_action('wp_ajax_verify_logincall_pin', 'verify_logincall_pin');
+
 
 function verify_logincall_pin()
 {
 
     header('Content-Type: application/json');
     $data = array('redirect' => 0);
-    if (isset($_SESSION['loginbycall_user_login_id']) && isset($_POST['loginbycall_call_maskphone'])) {
+    if ((isset($_SESSION['loginbycall_user_login_id'])||(isset($_SESSION['loginbycall_user_new_phone'])&&is_user_logged_in())) && isset($_POST['loginbycall_call_maskphone'])) {
 
         $_SESSION['loginbycall_count_login']++;
         if ($_SESSION['loginbycall_count_login'] > 3) {
@@ -706,15 +772,26 @@ function verify_logincall_pin()
 
         if ($_SESSION['loginbycall_mask_check'] == $_POST['loginbycall_call_maskphone']) {
             $_SESSION['loginbycall_count_login'] = 0;
-            wp_set_auth_cookie($_SESSION['loginbycall_user_login_id']);
-            if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', true) != 1)
+            if(!is_user_logged_in())
             {
-                update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', 1);
-                update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', 1);
+                wp_set_auth_cookie($_SESSION['loginbycall_user_login_id']);
+                if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', true) != 1)
+                {
+                    update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', 1);
+                    update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', 1);
+                }
+                call_hangup();
+                unset($_SESSION['loginbycall_user_login_id']);
+                $data = array('redirect' => 1);
             }
-            call_hangup();
-            unset($_SESSION['loginbycall_user_login_id']);
-            $data = array('redirect' => 1);
+            elseif(isset($_SESSION['loginbycall_user_new_phone']))
+            {
+                $user = wp_get_current_user();
+                update_user_meta($user->ID, 'loginbycall_user_phone', $_SESSION['loginbycall_user_new_phone']);
+                unset($_SESSION['loginbycall_user_new_phone']);
+                $data = array('redirect' => 2);
+            }
+
         } else {
             $data['error'] = __('<strong>ERROR</strong>: Phone not accepted.');
 

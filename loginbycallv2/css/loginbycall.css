@@ -3,7 +3,7 @@
 }
 .phone_mask{font-size: 24px; color: #04ace4; float: left; padding: 13px 4px;}
 .pin_container{
-    background-size:cover; width:100%;}
+    background-size:cover; width:272px;}
 .pin_container>div{padding:100px 31px 0;}
 .phone-number {
     max-width: 300px;
@@ -35,3 +35,13 @@ input[type=tel] {
 
 .admin_balance div{float: left;}
 #loginform{position: relative;}
+#loginbycall-dialog{
+    padding: 26px;
+    max-width:270px;
+}
+#loginbycall-dialog .input {
+    font-size: 24px;
+    width: 100%;
+    padding: 3px;
+    margin: 2px 6px 16px 0;
+}
