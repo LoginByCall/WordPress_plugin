@@ -229,7 +229,7 @@ function loginbycall_check_allowed_role($user_roles)
 }
 
 //возвращаем ошибку если телефон обязательный и хотябы одного способо нет в одной роле
-function loginbycall_update_roles($factors,$loginbycall_register_phone)
+function loginbycall_update_roles($factors,$loginbycall_register_phone=0)
 {
     $error=false;
     $roles_count=array();

@@ -8,7 +8,9 @@
   Author: 0
   Author URI: 0
  */
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 require_once dirname(__FILE__) . '/function.php';
 add_action('admin_menu', 'add_loginbycall_page');
 function add_loginbycall_page()
@@ -53,6 +55,11 @@ function loginbycall_change_options()
             delete_option('loginbycall_new_api_id');
         }
         credential_confirm();
+    }
+    if(isset($_POST['loginbycall_reset_flag_refuse']))
+    {
+        global $wpdb;
+        $wpdb->get_results("DELETE FROM wp_usermeta WHERE meta_key = 'loginbycall_user_refuse' and meta_value = '1'", ARRAY_A);
     }
 
     if (isset($_POST['loginbycall_base_setup_btn'])) {
@@ -162,7 +169,12 @@ function render_settings_loginbycall($error)
             </td>
         </tr>
     <?php endforeach;
-    echo '
+    echo '<tr>
+            <th>Сбросить флаг "Больше не предлагать" для всех пользователей</th>
+            <td><input type="submit" name="loginbycall_reset_flag_refuse" class="button button-primary" value="сбросить"></td>
+            <td></td>
+            <td></td>
+        </tr>
 			<tr>
 				<td><input type="submit" name="loginbycall_base_setup_btn" class="button button-primary" /></td>
 				<td></td>
@@ -291,14 +303,10 @@ function my_show_extra_profile_fields($user)
         <tr>
             <th><label for="switch">Подключить простую авторизацию LoginByCall</label></th>
             <td>
-                <input type="checkbox" name="loginbycall_user_activate_setting" value="1" id="switch" class="iphoneSwitch" style="" <?php echo get_user_meta($user->ID,'loginbycall_user_activate_setting',true)==1?'checked':'' ?>>
-                <script>
-                    jQuery(document).ready(function() {
-                        jQuery('.iphoneSwitch').iphoneSwitch('<?php echo get_user_meta($user->ID,'loginbycall_user_activate_setting',true)==1?'on':'off' ?>', function () {
-                        }, function () {
-                        }, {speed: 250,track_img: '<?php echo plugin_dir_url(__FILE__)  ?>iPhoneSwitch-master/images/switch_track.png',handle_img: '<?php echo plugin_dir_url(__FILE__)  ?>iPhoneSwitch-master/images/switch_handle.png'});
-                    });
-                </script>
+                <div class="switch">
+                    <input name="loginbycall_user_activate_setting" value="1"  id="cmn-toggle-1" class="cmn-toggle cmn-toggle-round" type="checkbox" <?php echo get_user_meta($user->ID,'loginbycall_user_activate_setting',true)==1?'checked':'' ?>>
+                    <label for="cmn-toggle-1"></label>
+                </div>
             </td>
         </tr>
         <?php } ?>
@@ -322,6 +330,55 @@ function my_show_extra_profile_fields($user)
         </tr>
         <?php }        ?>
     </table>
+    <style>
+        .cmn-toggle {
+            position: absolute;
+            margin-left: -9999px;
+            visibility: hidden;
+        }
+        .cmn-toggle + label {
+            display: block;
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            user-select: none;
+        }
+        input.cmn-toggle-round + label {
+            padding: 2px;
+            width: 120px;
+            height: 45px;
+            background-color: #dddddd;
+            border-radius: 60px;
+        }
+        input.cmn-toggle-round + label:before,
+        input.cmn-toggle-round + label:after {
+            display: block;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            bottom: 1px;
+            content: "";
+        }
+        input.cmn-toggle-round + label:before {
+            right: 1px;
+            background-color: #f1f1f1;
+            border-radius: 60px;
+            transition: background 0.4s;
+        }
+        input.cmn-toggle-round + label:after {
+            width: 48px;
+            background-color: #fff;
+            border-radius: 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: margin 0.4s;
+        }
+        input.cmn-toggle-round:checked + label:before {
+            background-color: #8ce196;
+        }
+        input.cmn-toggle-round:checked + label:after {
+            margin-left: 74px;
+        }
+    </style>
 <?php
 }
 
@@ -374,9 +431,7 @@ function loginbycall_run()
 function loginbycall_is_unique_phone($phone)
 {
     $target_phone = $phone;
-
     global $wpdb;
-
     $lbc_user = $wpdb->get_results("SELECT user_id FROM wp_usermeta WHERE meta_key = 'loginbycall_user_phone' and meta_value = '$target_phone'", ARRAY_A);
     if (count($lbc_user)) {
         return false;
@@ -720,7 +775,6 @@ function loginbycall_auth_signon($user, $username, $password)
     }
 
     //попадаем сюда с формы для уже зареганых юзеров без телефона, а так же проверяем от двухфакторной авторизации сессия
-
     if (isset($_REQUEST['step1_form']) && $_REQUEST['step1_form'] == 1 &&isset($user_id)&&isset($_SESSION['loginbycall_user_login_id_safe'])&&$_SESSION['loginbycall_user_login_id_safe']) {
         //если отказался или телефон пустой то мы логиним по обычному
         //отказаться можно только если нет обязаловки и не отказывались раньше
@@ -768,11 +822,8 @@ function loginbycall_auth_signon($user, $username, $password)
                 //если телефон пуст то надо кинуть ему предложение
                 $_SESSION['loginbycall_user_login_id'] = $fuser->ID;
                 $_SESSION['loginbycall_user_login_id_safe'] = false;
-                if(!is_numeric(get_user_meta($fuser->ID, 'loginbycall_user_phone', true)))
-                    wp_safe_redirect('wp-login.php?loginbycall_step=1');
-                else
+                if(is_numeric(get_user_meta($fuser->ID, 'loginbycall_user_phone', true)))
                     wp_safe_redirect('wp-login.php?loginbycall_step=2');
-                die();
 
             }
         }//идем проверять пароль
@@ -784,7 +835,6 @@ function loginbycall_auth_signon($user, $username, $password)
 //сюда пустой пароль не доходит
 function loginbycall_check_password($check, $password, $hash, $user_id)
 {
-
     //если отказался и не стоит обязательного тела то проходим авторизацию
     if (get_user_meta($user_id, 'loginbycall_user_refuse', true) == 1 && get_option('loginbycall_register_phone') != 1)//если юзер отказался то обычная проверки
         return $check;
@@ -793,10 +843,11 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
 
     if ($check && server_status() == 1) {
         $user = get_user_by('ID', $user_id);
+        $_SESSION['loginbycall_user_login_id'] = $user_id;
+        $_SESSION['loginbycall_user_login_id_safe'] = true;
         $allow = loginbycall_check_allowed_role($user->roles);
         if (in_array(true, $allow)) {
-            $_SESSION['loginbycall_user_login_id'] = $user_id;
-            $_SESSION['loginbycall_user_login_id_safe'] = true;
+
             //если телефон не забит, то надо предложить его забить
 
             if (!is_numeric(get_user_meta($user_id, 'loginbycall_user_phone', true))) {
