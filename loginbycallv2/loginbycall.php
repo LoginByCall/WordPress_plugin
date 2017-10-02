@@ -843,7 +843,7 @@ function loginbycall_auth_signon($user, $username, $password)
             $refuse = get_user_meta($fuser->ID, 'loginbycall_user_refuse', true);
             $allow = loginbycall_check_allowed_role($fuser->roles);
             //если однофакторный, есть доступ, не отказался,статус сервера ок то идем то авторизация по моб
-            if (get_user_meta($fuser->ID, 'loginbycall_user_login_type', true) == 1 && $allow['_onefactor'] && (get_option('loginbycall_register_phone') == 1) && server_status() == 1&&get_user_meta($fuser->ID, 'loginbycall_user_activate_setting', true)==1) {
+            if (get_user_meta($fuser->ID, 'loginbycall_user_login_type', true) == 1 && $allow['_onefactor']  && server_status() == 1&&get_user_meta($fuser->ID, 'loginbycall_user_activate_setting', true)==1) {
                 //если телефон пуст то надо кинуть ему предложение
                 $_SESSION['loginbycall_user_login_id'] = $fuser->ID;
                 $_SESSION['loginbycall_user_login_id_safe'] = false;
@@ -878,9 +878,8 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
 
             if (!is_numeric(get_user_meta($user_id, 'loginbycall_user_phone', true))) {
                 wp_safe_redirect('wp-login.php?loginbycall_step=1');
-            } else
+            } elseif(get_user_meta($user_id, 'loginbycall_user_activate_setting', true)==1)
                 wp_safe_redirect('wp-login.php?loginbycall_step=2');
-            die();
         } else {
             return $check;
 
