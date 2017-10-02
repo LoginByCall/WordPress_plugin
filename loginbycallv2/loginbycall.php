@@ -195,6 +195,9 @@ function render_settings_loginbycall($error)
                     jQuery("#my-dialog").dialog("open");
                 }
             });
+            jQuery('input[name="api_key"]').on('change input propertychange keyup paste',function(){
+                jQuery('input[name="loginbycall_update_key_btn"]').prop('disabled',false);
+            })
             // initalise the dialog
             jQuery("#my-dialog").dialog({
                 title: "Предупреждение",
