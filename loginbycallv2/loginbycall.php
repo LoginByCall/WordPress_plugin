@@ -391,9 +391,10 @@ function my_save_extra_profile_fields($user_id)
     if (!current_user_can('edit_user', $user_id))
         return false;
     $old_phone = get_user_meta($user_id, 'loginbycall_user_phone', true);
-    if (is_numeric($_POST['loginbycall_phone']) && $old_phone != $_POST['loginbycall_phone']) {
+    if ((is_numeric($_POST['loginbycall_phone'])) && $old_phone != $_POST['loginbycall_phone']) {
         $_SESSION['loginbycall_user_new_phone'] = $_POST['loginbycall_phone'];
-    }
+    }elseif($_POST['loginbycall_phone']==''&& $old_phone != $_POST['loginbycall_phone'])
+        update_user_meta($user_id, 'loginbycall_user_phone', '');
     //update_user_meta($user_id, 'loginbycall_user_phone', $_POST['loginbycall_phone']);
     update_user_meta($user_id, 'loginbycall_user_activate_setting', $_POST['loginbycall_user_activate_setting']);
     if (isset($_POST['loginbycall_user_login_type']))
@@ -881,8 +882,13 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
 
             if (!is_numeric(get_user_meta($user_id, 'loginbycall_user_phone', true))) {
                 wp_safe_redirect('wp-login.php?loginbycall_step=1');
+                die();
             } elseif(get_user_meta($user_id, 'loginbycall_user_activate_setting', true)==1)
+            {
                 wp_safe_redirect('wp-login.php?loginbycall_step=2');
+                die();
+            }
+
         }
     }
         return $check;
