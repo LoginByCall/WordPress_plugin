@@ -731,8 +731,10 @@ function verify_logincall_pin()
             if (!is_user_logged_in()) {
                 wp_set_auth_cookie($_SESSION['loginbycall_user_login_id']);
                 if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', true) != 1) {
-                    update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', 1);
                     update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', 1);
+                }
+                if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', true) != 1) {
+                    update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', 1);
                 }
                 call_hangup();
                 unset($_SESSION['loginbycall_user_login_id']);
