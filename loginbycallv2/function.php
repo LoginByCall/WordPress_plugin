@@ -33,10 +33,10 @@ function call_loginbycall($msisdn)
     } else {
         $ip = $_SERVER['REMOTE_ADDR'];
     }
-    //$info=service_loginbycall('call', array('msisdn'=>$msisdn,'ip_address'=>$ip),true);
+    $info=service_loginbycall('call', array('msisdn'=>$msisdn,'ip_address'=>$ip),true);
 
     //$info = json_decode('{"call":"ONP5qZde0pn43nDdRgmcNaEBlqoKyix3vK487LEQ","mask":"79256880636","codelen":4,"repeat_timeout":10}');
-    $info = json_decode('{"clazz":"PROCESS","reason":"ddd","error":"CALL_REPEAT_TIMEOUT","additional":{"delay":23.563}}');
+    //$info = json_decode('{"clazz":"PROCESS","reason":"ddd","error":"CALL_REPEAT_TIMEOUT","additional":{"delay":23.563}}');
 
     return $info;
 }

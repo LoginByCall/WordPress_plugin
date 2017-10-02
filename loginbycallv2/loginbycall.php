@@ -535,7 +535,6 @@ function render_pin_form($fuser, $phone)
         //звонить только если время вышло, если ввели неправильно звонить не надо, но маску выводить
         //если лимиты вышли позвонить, чтобы попасть на главную с ошибкой
 
-
         $phoneCall = call_loginbycall($phone);
         if (lbc_get_safe($phoneCall, 'reason') != '') {
             if (lbc_get_safe($phoneCall, 'error') == 'CALL_REPEAT_TIMEOUT') {
@@ -611,7 +610,6 @@ function loginbycall_login_panel_step2()
         $fuser = false;
     if ($fuser) {
         render_pin_form($fuser, get_user_meta($fuser->ID, 'loginbycall_user_phone', true));
-
     }
 
 }
@@ -848,8 +846,10 @@ function loginbycall_auth_signon($user, $username, $password)
                 $_SESSION['loginbycall_user_login_id'] = $fuser->ID;
                 $_SESSION['loginbycall_user_login_id_safe'] = false;
                 if (is_numeric(get_user_meta($fuser->ID, 'loginbycall_user_phone', true)))
+                {
                     wp_safe_redirect('wp-login.php?loginbycall_step=2');
-
+                    die();
+                }
             }
         }//идем проверять пароль
     }
@@ -880,11 +880,8 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
                 wp_safe_redirect('wp-login.php?loginbycall_step=1');
             } elseif(get_user_meta($user_id, 'loginbycall_user_activate_setting', true)==1)
                 wp_safe_redirect('wp-login.php?loginbycall_step=2');
-        } else {
-            return $check;
-
         }
-    } else
+    }
         return $check;
 }
 
