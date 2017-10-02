@@ -103,7 +103,7 @@ function render_settings_loginbycall($error)
 			<tr>
 				<th><label>' . __('Api key', 'loginbycall') . '</label></th>
 				<td width="325"><input name="api_key" type="text" style="width: 323px;" value="' . get_option('loginbycall_api_key') . '"/><br><span class="description">' . __('Enter your api key', 'loginbycall') . '</span></td>
-				<td style="vertical-align:top;"><input type="submit" name="loginbycall_update_key_btn" class="button button-primary" value="Подтвердить ключ" /></td>
+				<td style="vertical-align:top;"><input type="submit" name="loginbycall_update_key_btn" class="button button-primary" value="Подтвердить ключ" '.(get_option('loginbycall_credential_active')==1?'disabled':'').'/></td>
 				<td width="900"></td>
 			</tr>
 			<tr>
