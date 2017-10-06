@@ -95,7 +95,7 @@ function render_settings_loginbycall($error)
 
 
     echo '<h2>' . __('LoginByCall Settings', 'loginbycall') . '</h2>';
-    echo $error;
+
     if (get_option('loginbycall_credential_active') != 1)
         echo '<div class="notice notice-error"><p>' . __('Ключи не активны', 'loginbycall') . '</p></div>';
     echo '<form id="loginbycallupdateform" method="post" action="' . $_SERVER['PHP_SELF'] . '?page=loginbycall&updated=true">';
@@ -129,8 +129,15 @@ function render_settings_loginbycall($error)
 			<div><input name="email_notification_limit" value="' . lbc_get_safe($balance, 'balance_notify_limit') . '"><br><span class="description">Уведомлять при балансе менее</span></div>
 			</td>
 			<td></td>
-			</tr>
-			<tr>
+			</tr>';
+            if($error)
+                echo '
+ 		    <tr>
+			<th colspan="2">'.$error.'</th>
+			<td ></td>
+			<td></td>
+			</tr>';
+			echo '<tr>
 			<th><label>Обязательное использование LoginByCall для пользователей</label></th>
 			<td><input name="loginbycall_register_phone" value="1" type="checkbox" ' . (get_option('loginbycall_register_phone') == 1 ? 'checked="checked"' : '') . '></td>
 			<td></td>
