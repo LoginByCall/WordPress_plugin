@@ -268,7 +268,7 @@ function loginbycall_render_login_types($user, $olduser = false)
                 <input type="<?php echo $input_type ?>" name="loginbycall_user_login_type" id="user_login_type"
                        value="1" <?php echo ($type == 1 && $input_type != 'hidden') ? 'checked="checked"' : ''
                 ?>>
-                <?php echo $olduser ? 'Подключить простой и безопасный <br>(без пароля)' : 'Простой и безопасный (без пароля)' ?>
+                Входить без пароля
             </label>
         </div>
     <?php
@@ -281,7 +281,7 @@ function loginbycall_render_login_types($user, $olduser = false)
                        value="2" <?php
                 echo ($type == 2 && $input_type != 'hidden') ? 'checked="checked"' : ''
                 ?>>
-                <?php echo $olduser ? 'Подключить супербезопасный <br>(двухфакторная)' : 'Супербезопасный (двухфакторная)' ?>
+                Двухфакторная авторизация
             </label>
         </div>
     <?php
