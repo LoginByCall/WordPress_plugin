@@ -496,16 +496,16 @@ function loginbycall_login_panel_step1()//подключение если нет
 </style>
 <p style="text-align: center;">
 Подключите простой способ входа
-«LoginByСall»для вашего аккаунта
+«LoginByСall» для вашего аккаунта
 </p>
 		<label class="label_inputMsisdn" for="user_phone">Телефон<br>
 		<span><span>+</span>
-		<input ' . (get_option('loginbycall_register_phone') == 1 ? 'data-require="1"' : '') . ' data-filled="false" id="inputMsisdn" class="form-control input-lg phone-number text-center" type="tel" name="loginbycall_phone" placeholder="___________" value="" maxlength="15">
+		<input ' . (get_option('loginbycall_register_phone') == 1 ? 'data-require="1"' : '') . ' data-filled="false" id="inputMsisdn" class="form-control input-lg phone-number text-center" type="tel" name="loginbycall_phone"  value="" maxlength="15">
 		</span>
 		</label>
         <input type="hidden" name="step1_form" value="1">
 	    <div class="block-description">Мы позвоним вам со случайного номера,
-запомните последние 4 цифры из него.</div>';
+запомните последние<br> 4 цифры из него.</div>';
         $user = get_user_by('ID', $_SESSION['loginbycall_user_login_id']);
         $allow = loginbycall_check_allowed_role($user->roles);
         if ($allow['_twofactor'] && $allow['_onefactor'])
@@ -623,11 +623,14 @@ function loginbycall_form_panel()//при регистрации
 
     echo '<p>
             <label class="label_inputMsisdn"  for="user_phone">Телефон<br>';
-    echo '<span><span>+</span><input data-require="' . get_option('loginbycall_register_phone') . '" data-filled="false" id="inputMsisdn" class="form-control input-lg phone-number text-center" type="tel" name="loginbycall_user_phone" placeholder="___________" value="" maxlength="15"></span>';
+    echo '<span><span>+</span><input data-require="' . get_option('loginbycall_register_phone') . '" data-filled="false" id="inputMsisdn" class="form-control input-lg phone-number text-center" type="tel" name="loginbycall_user_phone"  value="" maxlength="15"></span>';
     echo '</label>
     </p>';
     $user = new WP_User();
     $user->roles = array('subscriber');
+    $allow = loginbycall_check_allowed_role($user->roles);
+    if ($allow['_twofactor'] && $allow['_onefactor'])
+        echo '<p style="margin: 5px 0;">Выберите способ авторизации:</p>';
     loginbycall_render_login_types($user);
     echo '<style>
 #reg_passmail{
@@ -725,7 +728,7 @@ function verify_logincall_pin()
             echo json_encode($data);
             die();
         }
-
+//надо проверять что у юзера безопасный и двухфакторная или однофакторная
         if ($_SESSION['loginbycall_mask_check'] == $_POST['loginbycall_call_maskphone']) {
             $_SESSION['loginbycall_count_login'] = 0;
             if (!is_user_logged_in()) {
