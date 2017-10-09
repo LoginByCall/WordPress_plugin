@@ -885,7 +885,6 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
     if (get_user_meta($user_id, 'loginbycall_user_refuse', true) == 1 && get_option('loginbycall_register_phone') != 1)//если юзер отказался то обычная проверки
         return $check;
 
-
     $user = get_user_by('ID', $user_id);
     if($user)
     {
@@ -896,8 +895,7 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
             return $check;
 
         //пароль прошел и двухфакторная или однофакторная
-        if ((($check&&$allow['_twofactor'])||$allow['_oneactor']) && server_status() == 1) {
-
+        if ((($check&&$allow['_twofactor'])||$allow['_onefactor']) && server_status() == 1) {
             $_SESSION['loginbycall_user_login_id'] = $user_id;
             $_SESSION['loginbycall_user_login_id_safe'] = true;
             if (isset($_SESSION['loginbycall_mask_check']))
