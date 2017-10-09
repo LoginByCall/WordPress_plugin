@@ -268,7 +268,7 @@ function loginbycall_render_login_types($user, $olduser = false)
                 <input type="<?php echo $input_type ?>" name="loginbycall_user_login_type" id="user_login_type"
                        value="1" <?php echo ($type == 1 && $input_type != 'hidden') ? 'checked="checked"' : ''
                 ?>>
-                Входить без пароля
+                Однофакторная авторизация
             </label>
         </div>
     <?php
@@ -634,7 +634,7 @@ function loginbycall_form_panel()//при регистрации
     echo '</label>
     </p>';
     $user = new WP_User();
-    $user->roles = array('subscriber');
+    $user->roles = array(get_option('default_role','subscriber'));
     $allow = loginbycall_check_allowed_role($user->roles);
     if ($allow['_twofactor'] && $allow['_onefactor'])
         echo '<p style="margin: 5px 0;">Выберите способ авторизации:</p>';
@@ -951,7 +951,7 @@ function loginbycall_registration_save($user_id)
     if (isset($_POST['loginbycall_user_login_type']))
         update_user_meta($user_id, 'loginbycall_user_login_type', $_POST['loginbycall_user_login_type']);
     if (server_status() == 1 && get_user_meta($user_id, 'loginbycall_user_activate_setting', true) == 1) {
-        if (get_option('loginbycall_subscriber_onefactor') == 1) {
+        if (get_option('loginbycall_'.get_option('default_role','subscriber').'_onefactor') == 1) {
             $_SESSION['loginbycall_user_login_id'] = $user_id;
             $_SESSION['loginbycall_user_login_id_safe'] = false;
             if (isset($_SESSION['loginbycall_mask_check']))
