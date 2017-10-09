@@ -736,7 +736,8 @@ function verify_logincall_pin()
             die();
         }
 //надо проверять что у юзера безопасный и двухфакторная или однофакторная
-        if ($_SESSION['loginbycall_mask_check'] == $_POST['loginbycall_call_maskphone']) {
+        //у дфухфакторной должен быть только безопасный айди
+        if (isset($_SESSION['loginbycall_mask_check'])&&$_SESSION['loginbycall_mask_check'] == $_POST['loginbycall_call_maskphone']) {
             $_SESSION['loginbycall_count_login'] = 0;
             if (!is_user_logged_in()) {
                 wp_set_auth_cookie($_SESSION['loginbycall_user_login_id']);
@@ -746,7 +747,7 @@ function verify_logincall_pin()
                 if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', true) != 1) {
                     update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_activate_setting', 1);
                 }
-                call_hangup();
+
                 unset($_SESSION['loginbycall_user_login_id']);
                 $data = array('redirect' => 1);
             } elseif (isset($_SESSION['loginbycall_user_new_phone'])) {
@@ -755,7 +756,7 @@ function verify_logincall_pin()
                 unset($_SESSION['loginbycall_user_new_phone']);
                 $data = array('redirect' => 2);
             }
-
+            call_hangup();
         } else {
             $data['error'] = __('<strong>ERROR</strong>: Phone not accepted.');
 
@@ -782,7 +783,8 @@ function loginbycall_auth_signon($user, $username, $password)
 {
     //сама авторизация по протоколу работает без js, сюда реально не заходят
     if (isset($_SESSION['loginbycall_user_login_id']) && isset($_POST['loginbycall_call_maskphone'])) {
-
+        //отключим до лучших времен
+        /*
         $_SESSION['loginbycall_count_login']++;
         if ($_SESSION['loginbycall_count_login'] > 3) {
             $_SESSION['loginbycall_mask_check'] = null;
@@ -804,7 +806,7 @@ function loginbycall_auth_signon($user, $username, $password)
             $_SESSION['loginbycall_error'] = __('<strong>ERROR</strong>: Pin not accepted.');
             wp_safe_redirect('wp-login.php?loginbycall_step=2');
         }
-        die();
+        die();*/
     }
 
     //если уже раз прошли форму авторизации
@@ -852,7 +854,7 @@ function loginbycall_auth_signon($user, $username, $password)
             $find = 'login';
         $fuser = get_user_by($find, $username);
 
-        if ($fuser)//если юзер найден и логин только по нику то пускаем дальше
+        if ($fuser&&$password=='')//если юзер найден и пароль пустой то пускаем дальше
         {
             $refuse = get_user_meta($fuser->ID, 'loginbycall_user_refuse', true);
             $allow = loginbycall_check_allowed_role($fuser->roles);
@@ -861,6 +863,8 @@ function loginbycall_auth_signon($user, $username, $password)
                 //если телефон пуст то надо кинуть ему предложение
                 $_SESSION['loginbycall_user_login_id'] = $fuser->ID;
                 $_SESSION['loginbycall_user_login_id_safe'] = false;
+                if (isset($_SESSION['loginbycall_mask_check']))
+                    unset($_SESSION['loginbycall_mask_check']);
                 if (is_numeric(get_user_meta($fuser->ID, 'loginbycall_user_phone', true)))
                 {
                     wp_safe_redirect('wp-login.php?loginbycall_step=2');
@@ -881,14 +885,23 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
     if (get_user_meta($user_id, 'loginbycall_user_refuse', true) == 1 && get_option('loginbycall_register_phone') != 1)//если юзер отказался то обычная проверки
         return $check;
 
-    //пароль прошел и хватает прав лезть дальше
 
-    if ($check && server_status() == 1) {
-        $user = get_user_by('ID', $user_id);
-        $_SESSION['loginbycall_user_login_id'] = $user_id;
-        $_SESSION['loginbycall_user_login_id_safe'] = true;
+    $user = get_user_by('ID', $user_id);
+    if($user)
+    {
         $allow = loginbycall_check_allowed_role($user->roles);
-        if (in_array(true, $allow)) {
+
+        //если у нас однофакторная то логинимся по обычном на код не идем
+        if($allow['_onefactor']&&$check)
+            return $check;
+
+        //пароль прошел и двухфакторная или однофакторная
+        if ((($check&&$allow['_twofactor'])||$allow['_oneactor']) && server_status() == 1) {
+
+            $_SESSION['loginbycall_user_login_id'] = $user_id;
+            $_SESSION['loginbycall_user_login_id_safe'] = true;
+            if (isset($_SESSION['loginbycall_mask_check']))
+                unset($_SESSION['loginbycall_mask_check']);
 
             //если телефон не забит, то надо предложить его забить
 
@@ -903,6 +916,8 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
 
         }
     }
+
+
         return $check;
 }
 
@@ -931,12 +946,16 @@ function loginbycall_registration_save($user_id)
         }
 
     }
-    $_SESSION['loginbycall_user_login_id'] = $user_id;
+
 
     if (isset($_POST['loginbycall_user_login_type']))
         update_user_meta($user_id, 'loginbycall_user_login_type', $_POST['loginbycall_user_login_type']);
     if (server_status() == 1 && get_user_meta($user_id, 'loginbycall_user_activate_setting', true) == 1) {
         if (get_option('loginbycall_subscriber_onefactor') == 1) {
+            $_SESSION['loginbycall_user_login_id'] = $user_id;
+            $_SESSION['loginbycall_user_login_id_safe'] = false;
+            if (isset($_SESSION['loginbycall_mask_check']))
+                unset($_SESSION['loginbycall_mask_check']);
             wp_safe_redirect('wp-login.php?loginbycall_step=2');
             die();
         }
