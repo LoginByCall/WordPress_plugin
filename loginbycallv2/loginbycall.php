@@ -737,8 +737,10 @@ function verify_logincall_pin()
         }
 //надо проверять что у юзера безопасный и двухфакторная или однофакторная
         //у дфухфакторной должен быть только безопасный айди
+
         if (isset($_SESSION['loginbycall_mask_check'])&&$_SESSION['loginbycall_mask_check'] == $_POST['loginbycall_call_maskphone']) {
             $_SESSION['loginbycall_count_login'] = 0;
+
             if (!is_user_logged_in()) {
                 wp_set_auth_cookie($_SESSION['loginbycall_user_login_id']);
                 if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', true) != 1) {
@@ -755,8 +757,12 @@ function verify_logincall_pin()
                 update_user_meta($user->ID, 'loginbycall_user_phone', $_SESSION['loginbycall_user_new_phone']);
                 unset($_SESSION['loginbycall_user_new_phone']);
                 $data = array('redirect' => 2);
+
             }
+            else
+                $data = array('redirect' => 1);
             call_hangup();
+
         } else {
             $data['error'] = __('<strong>ERROR</strong>: Phone not accepted.');
 
@@ -889,9 +895,8 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
     if($user)
     {
         $allow = loginbycall_check_allowed_role($user->roles);
-
         //если у нас однофакторная то логинимся по обычном на код не идем
-        if($allow['_onefactor']&&$check)
+        if($allow['_onefactor']&&$check&&get_user_meta($user->ID, 'loginbycall_user_login_type', true) == 1)
             return $check;
 
         //пароль прошел и двухфакторная или однофакторная
