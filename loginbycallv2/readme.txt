@@ -1,10 +1,9 @@
 === LoginByCall ===
 Contributors: 2246636
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XSJKST2MFEAXL
-Tags: OAuth, LoginByCall, login, call, loginby, loginbycall, login by call, oauth, password
+Tags: OAuth, LoginByCall, login, call, antibot, antispam, captcha, loginby, loginbycall, login by call, password free, easy login, easy sign in, easy registration, easy sign, 2FA
 Requires at least: 2.8
-Tested up to: 4.0
-Stable tag: 3.02
+Tested up to: 4.8.2
+Stable tag: 4.02
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,75 +16,58 @@ A plugin to allow authentification on WordPress using your cell phone. The servi
 From the user side, the process of signing up and logging in is performed within
 **TWO EASY STEPS** :
 
-1. The user specifies their mobile number in the [LoginByCall](https://loginbycall.com/ "Easy login service") form.
-2. The user gets a call from the [LoginByCall](https://loginbycall.com/ "Easy login service") number and answers it.*
+1. The user specifies their nickname or email in the WP authentication form.
+2. The user gets a call from the [LoginByCall]number and enter 4 last digits of incoming number in authentication form.
 
-* If the user answers the call, the system approves the login request.
-* In case the user declines the call, the system regards it as a refusal to login to their account.
+When signing in or logging in for the first time, the user will be confirm the right to use the mobile number they specified.
 
-When logging in for the first time, the user will be confirm the right to use the mobile number they specified.
+= The service allocates 1000 coins for each domain for a trial. =
 
-= The service is free of charge! =
+= Geographic availability =
 
-Why the [LoginByCall Service](https://loginbycall.com/ "Easy login service") may interest my users?
-- The signup and login process will be performed in two easy steps (entering the mobile number, answering the call).
+**WARNING!**
+
+The service is available in all countries, but some countries do not miss caller ID.
+
+Before using the service, check the caller ID [here](http://loginbycall.com/wp-login.php)
+and read the tariffs [here](http://loginbycall.com)
+
+**Why the [LoginByCall Service](https://loginbycall.com/ "Easy login service") may interest my users?**
+- Your users will be pleasantly surprised by the features of a simple login to your site.
+- You no longer need complicated captcha (the service will protect your site from bots).
+- The signup and login process will be performed in two easy steps.
 - Your users will never face the forgot-password issue again.
 - This unique service has no rivals on the global market.
-- The service also enables remote logout**.
+- You always have actual contacts of your users.
 
-** The remote logout feature is delivered upon request by LoginByCall Team.
+= AWARDS =
+The service LoginByCall won the battle of startups 2015 from ESET.
 
 = Demo: =
-http://wordpress.loginbycall.net/
+[http://loginbycall.com/wp-login.php](http://loginbycall.com/wp-login.php)
 
 Please tell your opinion about the plugin:
 
 = Facebook: =
-https://www.facebook.com/577948475623547
+[https://www.facebook.com/577948475623547](https://www.facebook.com/577948475623547)
 
 = VK.com: =
-http://vk.com/1loginbycall 
-
-= Now the service is available in Country: =
-
-= Registration confirmation by VOICE: =
-* Bahrain (+973);
-* Canada (+1);
-* Czech Republic (+420);
-* France (+33);
-* Germany (+49);
-* India (+91);
-* Italy (+39);
-* Russia (+7);
-* Singapore (+65);
-* Spain (+34);
-* UK (+44);
-* Ukraine (+380);
-* USA (+1);
-* Thailand (+66).
-
-= Registration confirmation by SMS: =
-* Austria (+43);
-* Latvia (+371);
-* Netherlands (+31).
-
-Other countries Web space authorization is possible upon a special arrangement.
+[http://vk.com/1loginbycall](http://vk.com/1loginbycall)
 
 == Installation ==
 
 = Installation Guide =
 
-EN: http://goo.gl/EpU1Pc
-
-RU: http://goo.gl/wyu3qd
-
+Not yet.
 
 = LoginByCall API Documentation =
 
-http://goo.gl/VGy4Lt
+EN: [here](https://github.com/LoginByCall/LoginByCall_workpiece/blob/master/README.md)
+RU: [Здесь](https://github.com/LoginByCall/LoginByCall_workpiece/blob/master/README2.md)
 
 = Demo: =
-http://wordpress.loginbycall.net/
+
+[http://loginbycall.com/wp-login.php](http://loginbycall.com/wp-login.php)
 
 == Changelog ==
 
@@ -114,7 +96,7 @@ http://wordpress.loginbycall.net/
 * April 30, 2014 Bug fix.
 
 = 2.77 =
-* May 06, 2014 Server side support oAuth scopes (nickname and email). 
+* May 06, 2014 Server side support oAuth scopes (nickname and email).
 
 = 3.00 =
 * November 16, 2014 Add scope 'phone' and link unique ID to phone.
@@ -124,6 +106,9 @@ http://wordpress.loginbycall.net/
 
 = 3.02 =
 * November 27, 2014 Some little bug fix.
+
+= 4.01 =
+* October 11, 2017 New version of plugin support easy 'w/o-password' authentication and '2-factor' authentication through phone.
 
 == Arbitrary section ==
 

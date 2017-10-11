@@ -2,11 +2,11 @@
 
 /*
   Plugin Name: LoginByCall
-  Plugin URI:
-  Description: LoginByCall
-  Version: 0.01
-  Author: 0
-  Author URI: 0
+  Plugin URI: https://wordpress.org/plugins/loginbycall/
+  Description: LoginByCall - easy sign-in & sign-up with call on your phone
+  Version: 4.02
+  Author: 2246636
+  Author URI: http://LoginByCall.com
  */
 
 require_once dirname(__FILE__) . '/function.php';
