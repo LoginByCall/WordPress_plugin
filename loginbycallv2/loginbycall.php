@@ -30,7 +30,6 @@ function ajax_login_init()
 
 add_action('login_enqueue_scripts', 'ajax_login_init');
 
-//создание глобальных перемееных для хранения настроек loginbycall
 function loginbycall_options_page()
 {
     loginbycall_change_options();
@@ -147,7 +146,7 @@ function render_settings_loginbycall($error)
 			<th><label>Настройки по ролям</label></th>
 			<td></td>
                                                 <td class="b">Разрешить
-                        безпарольную
+                        однофакторную
                         авторизацию</td>
                                                 <td class="b">Разрешить
                         двухфакторную
@@ -735,8 +734,6 @@ function verify_logincall_pin()
             echo json_encode($data);
             die();
         }
-//надо проверять что у юзера безопасный и двухфакторная или однофакторная
-        //у дфухфакторной должен быть только безопасный айди
 
         if (isset($_SESSION['loginbycall_mask_check'])&&$_SESSION['loginbycall_mask_check'] == $_POST['loginbycall_call_maskphone']) {
             $_SESSION['loginbycall_count_login'] = 0;
@@ -787,34 +784,6 @@ add_filter('authenticate', 'loginbycall_auth_signon', 10, 3);
 
 function loginbycall_auth_signon($user, $username, $password)
 {
-    //сама авторизация по протоколу работает без js, сюда реально не заходят
-    if (isset($_SESSION['loginbycall_user_login_id']) && isset($_POST['loginbycall_call_maskphone'])) {
-        //отключим до лучших времен
-        /*
-        $_SESSION['loginbycall_count_login']++;
-        if ($_SESSION['loginbycall_count_login'] > 3) {
-            $_SESSION['loginbycall_mask_check'] = null;
-
-            $_SESSION['loginbycall_error'] = __('<strong>ERROR</strong>: Maximum number of retries exceeded.');
-            wp_safe_redirect('wp-login.php?loginbycall_step=2');
-            die();
-        }
-
-        if ($_SESSION['loginbycall_mask_check'] == $_POST['loginbycall_call_maskphone']) {
-            $_SESSION['loginbycall_count_login'] = 0;
-            wp_set_auth_cookie($_SESSION['loginbycall_user_login_id']);
-            if (get_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', true) != 1)
-                update_user_meta($_SESSION['loginbycall_user_login_id'], 'loginbycall_user_active', 1);
-            unset($_SESSION['loginbycall_user_login_id']);
-            call_hangup();
-            wp_safe_redirect('/wp-admin/');
-        } else {
-            $_SESSION['loginbycall_error'] = __('<strong>ERROR</strong>: Pin not accepted.');
-            wp_safe_redirect('wp-login.php?loginbycall_step=2');
-        }
-        die();*/
-    }
-
     //если уже раз прошли форму авторизации
     if (isset($_SESSION['loginbycall_user_login_id']) && is_numeric($_SESSION['loginbycall_user_login_id'])) {
         $user_id = $_SESSION['loginbycall_user_login_id'];
@@ -834,11 +803,9 @@ function loginbycall_auth_signon($user, $username, $password)
             die();
         } else {
             $fuser = get_user_by('id', $user_id);
-            if (isset($_POST['loginbycall_phone'])) {
 
-            }
             if (!loginbycall_is_unique_phone($_POST['loginbycall_phone'])) {
-                $_SESSION['loginbycall_error'] = __('<strong>ОШИБКА</strong>: Телефон уже занят.');
+                $_SESSION['loginbycall_error'] = '<strong>'.__('ОШИБКА', 'loginbycall').'</strong>'.__(': Телефон уже занят.');
                 wp_safe_redirect('wp-login.php?loginbycall_step=1');
                 die();
             }
@@ -862,11 +829,9 @@ function loginbycall_auth_signon($user, $username, $password)
 
         if ($fuser&&$password=='')//если юзер найден и пароль пустой то пускаем дальше
         {
-            $refuse = get_user_meta($fuser->ID, 'loginbycall_user_refuse', true);
             $allow = loginbycall_check_allowed_role($fuser->roles);
             //если однофакторный, есть доступ, не отказался,статус сервера ок то идем то авторизация по моб
             if (get_user_meta($fuser->ID, 'loginbycall_user_login_type', true) == 1 && $allow['_onefactor']  && server_status() == 1&&get_user_meta($fuser->ID, 'loginbycall_user_activate_setting', true)==1) {
-                //если телефон пуст то надо кинуть ему предложение
                 $_SESSION['loginbycall_user_login_id'] = $fuser->ID;
                 $_SESSION['loginbycall_user_login_id_safe'] = false;
                 if (isset($_SESSION['loginbycall_mask_check']))
@@ -888,7 +853,7 @@ function loginbycall_auth_signon($user, $username, $password)
 function loginbycall_check_password($check, $password, $hash, $user_id)
 {
     //если отказался и не стоит обязательного тела то проходим авторизацию
-    if (get_user_meta($user_id, 'loginbycall_user_refuse', true) == 1 && get_option('loginbycall_register_phone') != 1)//если юзер отказался то обычная проверки
+    if (get_user_meta($user_id, 'loginbycall_user_refuse', true) == 1 &&get_user_meta($user_id, 'loginbycall_user_activate_setting', true) != 1)//если юзер отказался то обычная проверки
         return $check;
 
     $user = get_user_by('ID', $user_id);
@@ -928,9 +893,9 @@ function loginbycall_phone_check($errors, $sanitized_user_login, $user_email)
 {
 
     if (get_option('loginbycall_register_phone') == 1 && $_POST['loginbycall_user_phone'] == '') {
-        $errors->add('zipcode_error', __('<strong>ОШИБКА</strong>: Телефон должен быть заполнен.', 'loginbycall'));
+        $errors->add('zipcode_error', '<strong>'.__('ОШИБКА', 'loginbycall').'</strong>'.__(': Телефон должен быть заполнен.', 'loginbycall'));
     } elseif (strlen($_POST['loginbycall_user_phone']) > 0 && !loginbycall_is_unique_phone($_POST['loginbycall_user_phone'])) {
-        $errors->add('zipcode_error', __('<strong>ОШИБКА</strong>: Телефон уже занят.', 'loginbycall'));
+        $errors->add('zipcode_error', '<strong>'.__('ОШИБКА', 'loginbycall').'</strong>'.__(': Телефон уже занят.', 'loginbycall'));
     }
     return $errors;
 }
@@ -973,9 +938,7 @@ function loginbycall_delete_users_daily($user_id)
 
     if (get_user_meta($user_id, 'loginbycall_user_active', true) != 1 && get_user_meta($user_id, 'loginbycall_user_phone', true) != '') {
         require_once(ABSPATH . 'wp-admin/includes/user.php');
-
         wp_delete_user($user_id);
-
     }
 
 }
