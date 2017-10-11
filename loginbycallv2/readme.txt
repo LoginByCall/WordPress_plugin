@@ -1,10 +1,10 @@
 === LoginByCall ===
 Contributors: 2246636
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=XSJKST2MFEAXL
-Tags: OAuth, LoginByCall, login, call, loginby, loginbycall, login by call, oauth, password
+Tags: OAuth, LoginByCall, login, call, antibot, captcha, loginby, loginbycall, login by call, password free
 Requires at least: 2.8
-Tested up to: 4.0
-Stable tag: 3.02
+Tested up to: 4.8.2
+Stable tag: 4.01
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,7 +44,7 @@ Please tell your opinion about the plugin:
 https://www.facebook.com/577948475623547
 
 = VK.com: =
-http://vk.com/1loginbycall 
+http://vk.com/1loginbycall
 
 = Now the service is available in Country: =
 
@@ -114,7 +114,7 @@ http://wordpress.loginbycall.net/
 * April 30, 2014 Bug fix.
 
 = 2.77 =
-* May 06, 2014 Server side support oAuth scopes (nickname and email). 
+* May 06, 2014 Server side support oAuth scopes (nickname and email).
 
 = 3.00 =
 * November 16, 2014 Add scope 'phone' and link unique ID to phone.
