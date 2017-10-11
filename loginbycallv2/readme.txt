@@ -1,9 +1,9 @@
 === LoginByCall ===
 Contributors: 2246636
-Tags: OAuth, LoginByCall, login, call, antibot, captcha, loginby, loginbycall, login by call, password free
+Tags: OAuth, LoginByCall, login, call, antibot, antispam, captcha, loginby, loginbycall, login by call, password free, easy login, easy sign in, easy registration, easy sign, 2FA
 Requires at least: 2.8
 Tested up to: 4.8.2
-Stable tag: 4.01
+Stable tag: 4.02
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,32 +21,38 @@ From the user side, the process of signing up and logging in is performed within
 
 When signing in or logging in for the first time, the user will be confirm the right to use the mobile number they specified.
 
-= The service allocates 1000 coins for each domain for a try. =
+= The service allocates 1000 coins for each domain for a trial. =
 
-Why the [LoginByCall Service](https://loginbycall.com/ "Easy login service") may interest my users?
+= Geographic availability =
+
+**WARNING!**
+
+The service is available in all countries, but some countries do not miss caller ID.
+
+Before using the service, check the caller ID [here](http://loginbycall.com/wp-login.php)
+and read the tariffs [here](http://loginbycall.com)
+
+**Why the [LoginByCall Service](https://loginbycall.com/ "Easy login service") may interest my users?**
+- Your users will be pleasantly surprised by the features of a simple login to your site.
+- You no longer need complicated captcha (the service will protect your site from bots).
 - The signup and login process will be performed in two easy steps.
 - Your users will never face the forgot-password issue again.
 - This unique service has no rivals on the global market.
-- Your user will be pleasantly surprised by the features of a simple login to your site.
-- You always have actual contacts of your users&
-- you no longer need complicated captcha (the service will protect your site from bots).
+- You always have actual contacts of your users.
 
+= AWARDS =
 The service LoginByCall won the battle of startups 2015 from ESET.
 
 = Demo: =
-http://loginbycall.com/
+[http://loginbycall.com/wp-login.php](http://loginbycall.com/wp-login.php)
 
 Please tell your opinion about the plugin:
 
 = Facebook: =
-https://www.facebook.com/577948475623547
+[https://www.facebook.com/577948475623547](https://www.facebook.com/577948475623547)
 
 = VK.com: =
-http://vk.com/1loginbycall
-
-= The service is available in all countries, but some countries do not miss caller ID. =
-
-Before using the service, check the caller ID and read the tariffs for the service http://LoginByCall.com.
+[http://vk.com/1loginbycall](http://vk.com/1loginbycall)
 
 == Installation ==
 
@@ -56,12 +62,12 @@ Not yet.
 
 = LoginByCall API Documentation =
 
-EN: https://github.com/LoginByCall/LoginByCall_workpiece/blob/master/README.md
-RU: https://github.com/LoginByCall/LoginByCall_workpiece/blob/master/README2.md
+EN: [here](https://github.com/LoginByCall/LoginByCall_workpiece/blob/master/README.md)
+RU: [Здесь](https://github.com/LoginByCall/LoginByCall_workpiece/blob/master/README2.md)
 
 = Demo: =
 
-http://loginbycall.com/wp-login.php
+[http://loginbycall.com/wp-login.php](http://loginbycall.com/wp-login.php)
 
 == Changelog ==
 
