@@ -36,3 +36,135 @@ msgstr "Мои настройки LoginByCall"
 #: loginbycall.php:46
 msgid "Enter your api key"
 msgstr "Введите ваш api_key"
+
+msgid "One-factor authorization"
+msgstr "Однофакторная авторизация"
+
+msgid "Two-factor authorization"
+msgstr "Двухфакторная авторизация"
+
+msgid "LoginByCall settings"
+msgstr "Настройки простой авторизации «LoginByCall»"
+
+msgid "Enable LoginByCall"
+msgstr "Подключить простую авторизацию LoginByCall"
+
+msgid "Phone"
+msgstr "Телефон"
+
+msgid "LoginByCall mode"
+msgstr "Режим LoginByCall"
+
+msgid "Don't offer any more"
+msgstr "Больше не предлагать"
+
+msgid "Your cell number"
+msgstr "Ваш номер"
+
+msgid "LoginByCall is calling you. Enter 4 last digits of the incoming number.
+msgstr "Введите последние 4 цифры номера с которого мы вам звоним"
+
+msgid "Repeat after"
+msgstr "Повторить через"
+
+msgid "Specify at least one authorization method for each role"
+msgstr "Укажите хотя бы один способ авторизации для каждой роли"
+
+msgid "Missing API-key"
+msgstr "Ключи не активны"
+
+msgid "Activate"
+msgstr "Подтвердить ключ"
+
+msgid "Balance LoginByCall"
+msgstr "Баланс LoginByCall"
+
+msgid "View Rates"
+msgstr "Тарифы"
+
+msgid "Top up"
+msgstr "Пополнить баланс"
+
+msgid "Enter amount"
+msgstr "Укажите сумму пополнения в кредитах"
+
+msgid "Proceed"
+msgstr "Пополнить баланс"
+
+msgid "Balance notifications"
+msgstr "Уведомления о снижении баланса"
+
+msgid "E-mail for notification"
+msgstr "E-mail для уведомлений"
+
+msgid "Notify if balance is less"
+msgstr "Уведомлять при балансе менее"
+
+msgid "LoginByCall required"
+msgstr "Обязательное использование LoginByCall для пользователей"
+
+msgid "Role settings"
+msgstr "Настройки по ролям"
+
+msgid "Allow One-factor authorization"
+msgstr "Разрешить однофакторную авторизацию"
+
+msgid "Allow Two-factor authorization"
+msgstr "Разрешить двухфакторную авторизацию"
+
+msgid "Reset "No longer offer" flag for all users"
+msgstr "Сбросить флаг "Больше не предлагать" для всех пользователей"
+
+msgid "Reset"
+msgstr "Сбросить"
+
+msgid "Attention!"
+msgstr "Обратите внимание!"
+
+msgid "When the domain administrator's email is changed, api_key is reissued. New api-key will come to the email."
+msgstr "При смене email администратора домена происходит перевыпуск api_key. Новый api-key придет на почту."
+
+msgid "Don't forget to update the api-key"
+msgstr "Не забудьте обновить ключи сервиса"
+
+msgid "Warning!"
+msgstr "Предупреждение"
+
+msgid "Confirm"
+msgstr "Подтверждение"
+
+msgid "Allow the simple login method LoginByСall for your account"
+msgstr "Подключите простой способ входа «LoginByСall» для вашего аккаунта"
+
+msgid "We will call you from a random number,"
+msgstr "Мы позвоним вам со случайного номера, запомните последние"
+
+msgid "remember the last 4 digits from it."
+msgstr "4 цифры из него."
+
+msgid "Select LoginByCall mode"
+msgstr "Выберите способ авторизации:"
+
+msgid "Repeat after"
+msgstr "Повторите звонок через"
+
+msgid "seconds"
+msgstr "секунд"
+
+msgid "You can change the settings in your profile"
+msgstr "Вы можете изменить настройки в профиле"
+
+msgid "Call completed"
+msgstr "Звонок завершен"
+
+msgid "Ringing..."
+msgstr "Звонок совершается"
+
+msgid "Error"
+msgstr "ОШИБКА
+
+msgid ": This cell phone is already registered. "
+msgstr ": Телефон уже занят."
+
+msgid ": Enter your cell number"
+msgstr ": Телефон должен быть заполнен."
