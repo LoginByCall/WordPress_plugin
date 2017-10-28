@@ -66,7 +66,7 @@ function loginbycall_change_options()
 
         //если нет факторов для ролей и включено обязательный тел
         if (loginbycall_update_roles(array('_onefactor', '_twofactor'), $loginbycall_register_phone)) {
-            $error = '<div class="notice notice-error"><p>' . __('Укажите хотя бы один способ авторизации для всех ролей пользователей', 'loginbycall') . '</p></div>';
+            $error = '<div class="notice notice-error"><p>' . __('Specify at least one authorization method for each role', 'loginbycall') . '</p></div>';
         } else
             update_option('loginbycall_register_phone', $loginbycall_register_phone);
 
@@ -96,36 +96,36 @@ function render_settings_loginbycall($error)
     echo '<h2>' . __('LoginByCall Settings', 'loginbycall') . '</h2>';
 
     if (get_option('loginbycall_credential_active') != 1)
-        echo '<div class="notice notice-error"><p>' . __('Ключи не активны', 'loginbycall') . '</p></div>';
+        echo '<div class="notice notice-error"><p>' . __('Missing API-key', 'loginbycall') . '</p></div>';
     echo '<form id="loginbycallupdateform" method="post" action="' . $_SERVER['PHP_SELF'] . '?page=loginbycall&updated=true">';
     echo '<table class="form-table">
 			<tr>
 				<th><label>' . __('Api key', 'loginbycall') . '</label></th>
 				<td width="325"><input name="api_key" type="text" style="width: 323px;" value="' . get_option('loginbycall_api_key') . '"/><br><span class="description">' . __('Enter your api key', 'loginbycall') . '</span></td>
-				<td style="vertical-align:top;"><input type="submit" name="loginbycall_update_key_btn" class="button button-primary" value="Подтвердить ключ" '.(get_option('loginbycall_credential_active')==1?'disabled':'').'/></td>
+				<td style="vertical-align:top;"><input type="submit" name="loginbycall_update_key_btn" class="button button-primary" value="'.__('Activate', 'loginbycall').'" '.(get_option('loginbycall_credential_active')==1?'disabled':'').'/></td>
 				<td width="900"></td>
 			</tr>
 			<tr>
-			<th><label>Баланс LoginByCall</label></th>
+			<th><label>'.__('Balance LoginByCall', 'loginbycall').'</label></th>
 			<td  class="admin_balance" >
-			    <div style="float:left; line-height:2.2;" id="js-loginbycall-balance">' . (lbc_get_safe($balance, 'balance') - lbc_get_safe($balance, 'consumed')) . '</div><div style="float:left; line-height:2.2;  margin-right:5px;">&nbsp;кредитов</div>
+			    <div style="float:left; line-height:2.2;" id="js-loginbycall-balance">' . (lbc_get_safe($balance, 'balance') - lbc_get_safe($balance, 'consumed')) . '</div><div style="float:left; line-height:2.2;  margin-right:5px;">&nbsp;'.__('credits', 'loginbycall').'</div>
 			    <div style="padding-top:5px; float:left; margin-right:5px;"><a href="#" id="js-loginbycall-update"><img src="' . plugin_dir_url(__FILE__) . 'img/refresh.png" style="width:20px;"></a></div>
             </td>
-            <td><a href="http://loginbycall.com" target="_blank">Тарифы</a></td>
+            <td><a href="http://loginbycall.com" target="_blank">'.__('View Rates', 'loginbycall').'</a></td>
 			</tr>
 			<tr>
-			<th>Пополнить баланс</th>
-			<td width="300"><input name="pay" value="10000">  <br><span class="description">Укажите сумму пополнения в кредитах</span></td>
-			<td style="vertical-align:top;"><input type="submit" name="loginbycall_pay_btn" class="button button-primary" value="Пополнить баланс" /></td>
+			<th>'.__('Top up', 'loginbycall').'</th>
+			<td width="300"><input name="pay" value="10000">  <br><span class="description">'.__('Enter amount', 'loginbycall').'</span></td>
+			<td style="vertical-align:top;"><input type="submit" name="loginbycall_pay_btn" class="button button-primary" value="'.__('Proceed', 'loginbycall').'" /></td>
 			<td></td>
 			</tr>
 			<tr>
-			<th><label>Уведомлять о снижении баланса</label></th>
+			<th><label>'.__('Balance notificationsusers', 'loginbycall').'</label></th>
 			<td>
-			<div style="float:left"><input id="js_email_note" name="email_notification" value="' . getNotificationEmail() . '"><br><span class="description">E-mail для уведомлений</span></div>
+			<div style="float:left"><input id="js_email_note" name="email_notification" value="' . getNotificationEmail() . '"><br><span class="description">'.__('E-mail for notification', 'loginbycall').'</span></div>
 			</td>
 			<td>
-			<div><input name="email_notification_limit" value="' . lbc_get_safe($balance, 'balance_notify_limit') . '"><br><span class="description">Уведомлять при балансе менее</span></div>
+			<div><input name="email_notification_limit" value="' . lbc_get_safe($balance, 'balance_notify_limit') . '"><br><span class="description">'.__('Notify if balance is less', 'loginbycall').'</span></div>
 			</td>
 			<td></td>
 			</tr>';
@@ -137,20 +137,16 @@ function render_settings_loginbycall($error)
 			<td></td>
 			</tr>';
 			echo '<tr>
-			<th><label>Обязательное использование LoginByCall для пользователей</label></th>
+			<th><label>'.__('LoginByCall required', 'loginbycall').'</label></th>
 			<td><input name="loginbycall_register_phone" value="1" type="checkbox" ' . (get_option('loginbycall_register_phone') == 1 ? 'checked="checked"' : '') . '></td>
 			<td></td>
 			<td></td>
 			</tr>
 			<tr>
-			<th><label>Настройки по ролям</label></th>
+			<th><label>'.__('Role settings', 'loginbycall').'</label></th>
 			<td></td>
-                                                <td class="b">Разрешить
-                        однофакторную
-                        авторизацию</td>
-                                                <td class="b">Разрешить
-                        двухфакторную
-                        авторизацию</td>
+            <td class="b">'.__('Allow One-factor authorization', 'loginbycall').'</td>
+            <td class="b">'.__('Allow Two-factor authorization', 'loginbycall').'</td>
                     </tr>';
 
     foreach (get_editable_roles() as $role_name => $role_info): ?>
@@ -166,7 +162,7 @@ function render_settings_loginbycall($error)
         </tr>
     <?php endforeach;
     echo '<tr>
-            <th>Сбросить флаг "Больше не предлагать" для всех пользователей</th>
+            <th>'.__('Reset "No longer offer" flag for all users', 'loginbycall').'</th>
             <td><input type="submit" name="loginbycall_reset_flag_refuse" class="button button-primary" value="сбросить"></td>
             <td></td>
             <td></td>
@@ -179,9 +175,9 @@ function render_settings_loginbycall($error)
 			</tr>
 		</table>
 		<div id="my-dialog" class="hidden" style="max-width:800px">
-  <h3>Обратите внимание!</h3>
-  <p>При смене email администратора домена происходит перевыпуск api_key, который придет на почту.</p>
-  <p>Не забудьте обновить ключи сервиса</p>
+  <h3>'.__('Attention!', 'loginbycall').'</h3>
+  <p>'.__('When the domain administrator\'s email is changed, api_key is reissued. New api-key will come to the email.', 'loginbycall').'</p>
+  <p>'.__('Don\'t forget to update the api-key', 'loginbycall').'</p>
 </div>';
     echo '</form>';
     ?>
@@ -267,7 +263,7 @@ function loginbycall_render_login_types($user, $olduser = false)
                 <input type="<?php echo $input_type ?>" name="loginbycall_user_login_type" id="user_login_type"
                        value="1" <?php echo ($type == 1 && $input_type != 'hidden') ? 'checked="checked"' : ''
                 ?>>
-                Однофакторная авторизация
+                <?php echo $input_type != 'hidden'?__('One-factor authorization', 'loginbycall'):'' ?>
             </label>
         </div>
     <?php
@@ -280,7 +276,7 @@ function loginbycall_render_login_types($user, $olduser = false)
                        value="2" <?php
                 echo ($type == 2 && $input_type != 'hidden') ? 'checked="checked"' : ''
                 ?>>
-                Двухфакторная авторизация
+                <?php echo $input_type != 'hidden'?__('Two-factor authorization', 'loginbycall'):'' ?>
             </label>
         </div>
     <?php
@@ -288,10 +284,10 @@ function loginbycall_render_login_types($user, $olduser = false)
 }
 
 
-add_action('show_user_profile', 'my_show_extra_profile_fields');
-add_action('edit_user_profile', 'my_show_extra_profile_fields');
+add_action('show_user_profile', 'loginbycall_show_extra_profile_fields');
+add_action('edit_user_profile', 'loginbycall_show_extra_profile_fields');
 
-function my_show_extra_profile_fields($user)
+function loginbycall_show_extra_profile_fields($user)
 {
     wp_enqueue_script('jquery-ui-dialog'); // jquery and jquery-ui should be dependencies, didn't check though...
     wp_enqueue_style('wp-jquery-ui-dialog');
@@ -299,11 +295,11 @@ function my_show_extra_profile_fields($user)
     wp_enqueue_script('ajax-login-script');
     wp_enqueue_style('custom-login', plugin_dir_url(__FILE__) . '/css/loginbycall.css');
     ?>
-    <h3>Настройки простой авторизации «LoginByCall»</h3>
+    <h3><?php _e('LoginByCall settings', 'loginbycall') ?></h3>
     <table class="form-table">
         <?php if (get_option('loginbycall_register_phone') != 1) { ?>
             <tr>
-                <th><label for="switch">Подключить простую авторизацию LoginByCall</label></th>
+                <th><label for="switch"><?php _e('Enable LoginByCall', 'loginbycall') ?></label></th>
                 <td>
                     <div class="switch">
                         <input name="loginbycall_user_activate_setting" value="1" id="cmn-toggle-1"
@@ -315,7 +311,7 @@ function my_show_extra_profile_fields($user)
             </tr>
         <?php } ?>
         <tr>
-            <th><label for="loginbycall_phone">Телефон</label></th>
+            <th><label for="loginbycall_phone"><?php _e('Phone', 'loginbycall') ?></label></th>
             <td>
                 +<input type="text" name="loginbycall_phone" id="loginbycall_phone"
                         value="<?php echo get_user_meta($user->ID, 'loginbycall_user_phone', true); ?>"
@@ -327,7 +323,7 @@ function my_show_extra_profile_fields($user)
         if ($allow['_twofactor'] && $allow['_onefactor']) {
             ?>
             <tr>
-                <th><label for="loginbycall_user_factor">Режим LoginByCall</label></th>
+                <th><label for="loginbycall_user_factor"><?php _e('LoginByCall mode', 'loginbycall') ?></label></th>
                 <td>
                     <?php loginbycall_render_login_types($user); ?>
                 </td>
@@ -342,14 +338,14 @@ function my_show_extra_profile_fields($user)
             <?php render_pin_form($user, $_SESSION['loginbycall_user_new_phone']); ?>
             <p class="submit">
                 <input type="submit" name="wp-submit" id="wp-submit" class="button button-primary button-large"
-                       value="потвердить" disabled="">
+                       value="<?php _e('Confirm', 'loginbycall') ?>" disabled="">
             </p>
         </div>
         <script>jQuery(document).ready(function (e) {
 
                 // initalise the dialog
                 jQuery("#loginbycall-dialog").dialog({
-                    title: "Подтверждение",
+                    title: "<?php _e('Confirm', 'loginbycall') ?>",
                     dialogClass: "wp-dialog",
                     autoOpen: true,
                     draggable: false,
@@ -388,10 +384,10 @@ function my_show_extra_profile_fields($user)
 <?php
 }
 
-add_action('personal_options_update', 'my_save_extra_profile_fields');
-add_action('edit_user_profile_update', 'my_save_extra_profile_fields');
+add_action('personal_options_update', 'loginbycall_save_extra_profile_fields');
+add_action('edit_user_profile_update', 'loginbycall_save_extra_profile_fields');
 
-function my_save_extra_profile_fields($user_id)
+function loginbycall_save_extra_profile_fields($user_id)
 {
 
     if (!current_user_can('edit_user', $user_id))
@@ -500,29 +496,29 @@ function loginbycall_login_panel_step1()//подключение если нет
     p.submit{text-align: center; margin-top: 5px!important;}
                             p.submit input{float: none!important;}
 </style>
-<p style="text-align: center;">
-Подключите простой способ входа
-«LoginByСall» для вашего аккаунта
+<p style="text-align: center;">'.__('Allow the simple login method LoginByСall for your account', 'loginbycall').'
 </p>
-		<label class="label_inputMsisdn" for="user_phone">Телефон<br>
+		<label class="label_inputMsisdn" for="user_phone">'.__('Phone', 'loginbycall').'<br>
 		<span><span>+</span>
 		<input ' . (get_option('loginbycall_register_phone') == 1 ? 'data-require="1"' : '') . ' data-filled="false" id="inputMsisdn" class="form-control input-lg phone-number text-center" type="tel" name="loginbycall_phone"  value="" maxlength="15">
 		</span>
 		</label>
         <input type="hidden" name="step1_form" value="1">
-	    <div class="block-description">Мы позвоним вам со случайного номера,
-запомните последние<br> 4 цифры из него.</div>';
+	    <div class="block-description">
+	    '.__('We will call you from a random number,', 'loginbycall').'
+	    <br>'.__('remember the last 4 digits from it.', 'loginbycall').'</div>';
         $user = get_user_by('ID', $_SESSION['loginbycall_user_login_id']);
         $allow = loginbycall_check_allowed_role($user->roles);
         if ($allow['_twofactor'] && $allow['_onefactor'])
-            echo '<p style="margin: 5px 0;">Выберите способ авторизации:</p>';
+            echo '<p style="margin: 5px 0;">'.__('Select LoginByCall mode', 'loginbycall').':</p>';
         loginbycall_render_login_types($user, $olduser = true);
         if (get_option('loginbycall_register_phone') != 1) {
             ?>
             <div style="position: absolute; bottom:5px;">
                 <div style="text-align: center;"><label for="loginbycall_user_refuse">
                         <input type="checkbox" name="loginbycall_user_refuse" id="loginbycall_user_refuse" value="1">
-                        Больше не предлагать</label></div>
+                        <?php echo __('Don\'t offer any more', 'loginbycall') ?>
+                        </label></div>
             </div>
         <?php
         }
@@ -549,7 +545,7 @@ function render_pin_form($fuser, $phone)
         if (lbc_get_safe($phoneCall, 'reason') != '') {
             if (lbc_get_safe($phoneCall, 'error') == 'CALL_REPEAT_TIMEOUT') {
                 $countdown = ceil($phoneCall->additional->delay);
-                $_SESSION['loginbycall_error'] = 'Повторите звонок через ' . $countdown . ' секунд';
+                $_SESSION['loginbycall_error'] = __('Repeat after', 'loginbycall').' '. $countdown . ' '.__('seconds', 'loginbycall');
             } else {
                 $_SESSION['loginbycall_error'] = lbc_get_safe($phoneCall, 'reason');
                 wp_safe_redirect('wp-login.php');
@@ -565,7 +561,7 @@ function render_pin_form($fuser, $phone)
             $countdown = lbc_get_safe($phoneCall, 'repeat_timeout');
         }
         ?>
-        <p style="text-align: center; padding: 5px; font-size: 15px;">Ваш номер: +<?php echo $phone ?></p>
+        <p style="text-align: center; padding: 5px; font-size: 15px;"><?php _e('Your cell number', 'loginbycall');?> +<?php echo $phone ?></p>
         <div class="pin_container"
              style="background-image:url('<?php echo plugin_dir_url(__FILE__) ?>/img/phone.svg');">
             <div>
@@ -577,11 +573,11 @@ function render_pin_form($fuser, $phone)
         </div>
 
         <div class="block-description">
-            Введите последние 4 цифры
-            номера с которого мы вам звоним
+
+            <?php echo __('LoginByCall is calling you. Enter 4 last digits of the incoming number.', 'loginbycall') ?>
         </div>
         <div id="call_status"></div>
-        <div id="countdowntext">Повторить через  <?php echo $countdown ?> секунд</div>
+        <div id="countdowntext"><?php echo __('Repeat after', 'loginbycall') ?> <?php echo $countdown ?> <?php echo __('seconds', 'loginbycall') ?></div>
         <style>
             #login p label {
                 display: none;
@@ -624,11 +620,31 @@ function loginbycall_login_panel_step2()
 
 }
 
+function loginbycall_change_wplogin_title() {
+    return '<p class="message register">Авторизация LoginByCall не требует запоминания паролей.
+Вам поступит звонок со случайного номера и
+надо будет указать его последние 4 цифры.</p>';
+}
+
+function loginbycall_filter_gettext( $translated, $original, $domain ) {
+    // Use the text string exactly as it is in the translation file
+    if ( $original == "Password" ) {
+        $translated = __('Password or leave field blank','loginbycall');
+    }
+    return $translated;
+}
+
+$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'login';
+if($action=='register')
+    add_filter('login_message', 'loginbycall_change_wplogin_title');
+elseif($action=='login')
+    add_filter( 'gettext', 'loginbycall_filter_gettext', 10, 3 );
 function loginbycall_form_panel()//при регистрации
 {
 
+
     echo '<p>
-            <label class="label_inputMsisdn"  for="user_phone">Телефон<br>';
+            <label class="label_inputMsisdn"  for="user_phone">'.__('Phone', 'loginbycall').'<br>';
     echo '<span><span>+</span><input data-require="' . get_option('loginbycall_register_phone') . '" data-filled="false" id="inputMsisdn" class="form-control input-lg phone-number text-center" type="tel" name="loginbycall_user_phone"  value="" maxlength="15"></span>';
     echo '</label>
     </p>';
@@ -636,13 +652,14 @@ function loginbycall_form_panel()//при регистрации
     $user->roles = array(get_option('default_role','subscriber'));
     $allow = loginbycall_check_allowed_role($user->roles);
     if ($allow['_twofactor'] && $allow['_onefactor'])
-        echo '<p style="margin: 5px 0;">Выберите способ авторизации:</p>';
+        echo '<p style="margin: 5px 0;">'.__('Select LoginByCall mode', 'loginbycall').'</p>';
     loginbycall_render_login_types($user);
     echo '<style>
 #reg_passmail{
     display: none;
-}</style>
-<p>Вы можете изменить настройки в профиле</p>';
+}</style>';
+    if ($allow['_twofactor'] && $allow['_onefactor'])
+        echo '<p>'.__('You can change the settings in your profile', 'loginbycall').'</p>';
 }
 
 function loginbycall_uninstall_hook()
@@ -702,9 +719,9 @@ function call_status_ajax()
     if ($status_id == 32)
         $str = lbc_get_safe($status, 'last_error');
     elseif ($status_id >= 4)
-        $str = 'Звонок завершен';
+        $str = __('Call completed', 'loginbycall');
     else
-        $str = 'Звонок совершается';
+        $str = __('Ringing...', 'loginbycall');
     echo json_encode(array('id' => $status_id, 'textMsg' => $str));
     die();
 }
@@ -730,7 +747,7 @@ function verify_logincall_pin()
         $_SESSION['loginbycall_count_login']++;
         if ($_SESSION['loginbycall_count_login'] > 3) {
             $_SESSION['loginbycall_mask_check'] = null;
-            $data['error'] = __('<strong>ERROR</strong>: Maximum number of retries exceeded.');
+            $data['error'] = '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': Maximum number of retries exceeded.', 'loginbycall');
             echo json_encode($data);
             die();
         }
@@ -761,7 +778,7 @@ function verify_logincall_pin()
             call_hangup();
 
         } else {
-            $data['error'] = __('<strong>ERROR</strong>: Phone not accepted.');
+            $data['error'] = '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': Phone not accepted.');
 
         }
     }
@@ -805,7 +822,7 @@ function loginbycall_auth_signon($user, $username, $password)
             $fuser = get_user_by('id', $user_id);
 
             if (!loginbycall_is_unique_phone($_POST['loginbycall_phone'])) {
-                $_SESSION['loginbycall_error'] = '<strong>'.__('ОШИБКА', 'loginbycall').'</strong>'.__(': Телефон уже занят.');
+                $_SESSION['loginbycall_error'] = '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': This cell phone is already registered.');
                 wp_safe_redirect('wp-login.php?loginbycall_step=1');
                 die();
             }
@@ -893,9 +910,9 @@ function loginbycall_phone_check($errors, $sanitized_user_login, $user_email)
 {
 
     if (get_option('loginbycall_register_phone') == 1 && $_POST['loginbycall_user_phone'] == '') {
-        $errors->add('zipcode_error', '<strong>'.__('ОШИБКА', 'loginbycall').'</strong>'.__(': Телефон должен быть заполнен.', 'loginbycall'));
+        $errors->add('zipcode_error', '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': Enter your cell number', 'loginbycall'));
     } elseif (strlen($_POST['loginbycall_user_phone']) > 0 && !loginbycall_is_unique_phone($_POST['loginbycall_user_phone'])) {
-        $errors->add('zipcode_error', '<strong>'.__('ОШИБКА', 'loginbycall').'</strong>'.__(': Телефон уже занят.', 'loginbycall'));
+        $errors->add('zipcode_error', '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': This cell phone is already registered.', 'loginbycall'));
     }
     return $errors;
 }

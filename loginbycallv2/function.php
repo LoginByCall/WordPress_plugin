@@ -138,7 +138,7 @@ function credential_confirm()
     return $info;
 }
 
-//var_dump(status_loginbycall());
+
 function options_loginbycall($limit)
 {
     return $info = service_loginbycall('options', array('balance_notify_limit' => $limit), true);
@@ -155,19 +155,6 @@ consumed - сумма всех расходов клиента в копейка
 balance_notify_limit - установленный минимальный баланс в копейках при котором будут отправляться сообщения администратору. Подробнее см. в методе register.
 last_payments - массив из 5 последних платежей клиента. Каждый элемент массива это объект с двумя свойствами value - сумма платежа и created - UNIX time даты платежа.
      */
-}
-
-//var_dump(balance_loginbycall());
-//заполняет кэллапи таймстамп и нонсе и добавляет данные и возвращает все вместе
-function loginbycall_crypto($additiondata = array())
-{
-    $data['method'] = 'balance';
-    $data['call-api-id'] = get_option('loginbycall_api_id');
-    $data['timestamp'] = time();
-    $data['nonce'] = loginbycall_generator(20);
-    $data = array_merge($data, $additiondata);
-    $data['signature'] = hash_hmac('sha512', implode(chr(0x00), $data), get_option('loginbycall_api_key'));
-    return $data;
 }
 
 
@@ -199,24 +186,7 @@ function loginbycall_generator($max)
     return $password;
 }
 
-/* Функция получения ссылки на сервис */
 
-function loginbycall_create_link($login = NULL)
-{
-    ($login) ? $new = '&login=' . $login : $new = NULL;
-    return 'https://loginbycall.com/oauth/authorize?client_id=' . get_option('loginbycall_client_id') . '&redirect_uri=' . get_option('loginbycall_redirect_uri') . '&response_type=code&scope=nickname+email+phone&display=popup' . $new; //&new_account='.$new_account)
-}
-
-function wp_exist_post_by_name($name)
-{
-    global $wpdb;
-    $table_name = $wpdb->prefix . "posts";
-    $id = $wpdb->get_row("SELECT id FROM " . $table_name . " WHERE post_name = '" . $name . "'", 'ARRAY_A');
-    if (count($id)) {
-        return $id['id'];
-    }
-    return false;
-}
 
 function loginbycall_check_allowed_role($user_roles)
 {
