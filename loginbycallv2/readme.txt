@@ -3,7 +3,7 @@ Contributors: 2246636
 Tags: OAuth, LoginByCall, login, call, antibot, antispam, captcha, loginby, loginbycall, login by call, password free, easy login, easy sign in, easy registration, easy sign, 2FA
 Requires at least: 2.8
 Tested up to: 4.8.2
-Stable tag: 4.03
+Stable tag: 4.04
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,15 +11,15 @@ A plugin to allow authentification on WordPress using your cell phone. The servi
 
 == Description ==
 
-= LoginByCall is a service which enables easy user authentication (sing up & sign in) via a mobile phone. =
+= LoginByCall is a service which enables automatic user authentication via a mobile phone. =
 
 From the user side, the process of signing up and logging in is performed within
 **TWO EASY STEPS** :
 
 1. The user specifies their nickname or email in the WP authentication form.
-2. The user gets a call from the [LoginByCall](http://loginbycall.com) number and enter 4 last digits of incoming number in authentication form.
+2. The user gets a call from the [LoginByCall]number and enter 4 last digits of incoming number in authentication form.
 
-When signing up or logging in for the first time, the user will be confirm the right to use the mobile number they specified.
+When signing in or logging in for the first time, the user will be confirm the right to use the mobile number they specified.
 
 = The service allocates 1000 coins for each domain for a trial. =
 
@@ -30,16 +30,15 @@ When signing up or logging in for the first time, the user will be confirm the r
 The service is available in all countries, but some countries do not miss caller ID.
 
 Before using the service, check the caller ID [here](http://loginbycall.com/wp-login.php)
-and find the tariffs [here](http://loginbycall.com)
+and read the tariffs [here](http://loginbycall.com)
 
-**Why the [LoginByCall Service](http://loginbycall.com) ("Easy login service") may interest my users?**
-1. The sites using LoginByCall significantly higher conversion VS the traditional method of registration
-2. Your users will be pleasantly surprised by the features of a simple sign up & sign in to your site.
-3. You no longer need complicated captcha (the service will protect your site from bots & spam).
-4. The signup and login process will be performed in two easy steps.
-5. Your users will never face the forgot-password issue again.
-6. This unique service has no rivals on the global market.
-7. You always have actual contacts of your users.
+**Why the [LoginByCall Service](https://loginbycall.com/ "Easy login service") may interest my users?**
+- Your users will be pleasantly surprised by the features of a simple login to your site.
+- You no longer need complicated captcha (the service will protect your site from bots).
+- The signup and login process will be performed in two easy steps.
+- Your users will never face the forgot-password issue again.
+- This unique service has no rivals on the global market.
+- You always have actual contacts of your users.
 
 = AWARDS =
 The service LoginByCall won the battle of startups 2015 from ESET.
@@ -111,8 +110,11 @@ RU: [Здесь](https://github.com/LoginByCall/LoginByCall_workpiece/blob/maste
 = 4.01 =
 * October 11, 2017 New version of plugin support easy 'w/o-password' authentication and '2-factor' authentication through phone.
 
-= 4.03 =
-* October 13, 2017 English language translate added.
+= 4.02 =
+* October 11, 2017 Add new *.svg files to img folder.
+
+= 4.04 =
+* October 28, 2017 Add english language.
 
 == Arbitrary section ==
 
