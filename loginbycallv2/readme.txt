@@ -2,12 +2,12 @@
 Contributors: 2246636
 Tags: OAuth, LoginByCall, login, call, antibot, antispam, captcha, loginby, loginbycall, login by call, password free, easy login, easy sign in, easy registration, easy sign, 2FA
 Requires at least: 2.8
-Tested up to: 4.8.2
+Tested up to: 4.8.3
 Stable tag: 4.05
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A plugin to allow authentification on WordPress using your cell phone. The service is free of charge!
+A plugin to allow easy sign-up and sign-in on WordPress using your cell phone.
 
 == Description ==
 
