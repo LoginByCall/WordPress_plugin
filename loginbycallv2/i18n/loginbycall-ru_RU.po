@@ -1,4 +1,4 @@
-msgid ""
+﻿msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "POT-Creation-Date: 2013-07-31 05:54+0400\n"
@@ -48,8 +48,8 @@ msgstr "Настройки простой авторизации «LoginByCall»
 msgid "Enable LoginByCall"
 msgstr "Подключить простую авторизацию LoginByCall"
 
-msgid "Phone"
-msgstr "Телефон"
+msgid "Phone w/o \"+\" (1234567890)"
+msgstr "Телефон в международном формате без \"+\""
 
 msgid "LoginByCall mode"
 msgstr "Режим LoginByCall"
@@ -84,8 +84,8 @@ msgstr "Тарифы"
 msgid "Top up"
 msgstr "Пополнить баланс"
 
-msgid "Enter amount"
-msgstr "Укажите сумму пополнения в кредитах"
+msgid "Enter amount in LBC credits (1 USD = 10.000 credits)"
+msgstr "Укажите сумму пополнения в LBC кредитах (1 USD = 10.000 кредитов)"
 
 msgid "Proceed"
 msgstr "Пополнить баланс"
