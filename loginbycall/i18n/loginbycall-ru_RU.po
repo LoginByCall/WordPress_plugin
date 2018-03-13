@@ -1,8 +1,8 @@
-﻿msgid ""
+msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "POT-Creation-Date: 2013-07-31 05:54+0400\n"
-"PO-Revision-Date: 2017-10-27 17:51+0300\n"
+"PO-Revision-Date: 2018-03-13 08:11+0300\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Russian <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
@@ -33,8 +33,8 @@ msgid "My settings LoginByCall"
 msgstr "Мои настройки LoginByCall"
 
 #: loginbycall.php:46
-msgid "Enter your api key"
-msgstr "Введите ваш api_key"
+msgid "Enter your api key. To reissue the key, deactivate and reactivate the plugin."
+msgstr "Введите ваш api_key. Для перевыпуска ключа деактивируйте и снова активируйте плагин."
 
 msgid "One-factor authorization"
 msgstr "Однофакторная авторизация"
