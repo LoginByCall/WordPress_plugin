@@ -1,9 +1,9 @@
-=== LoginByCall ===
+﻿=== LoginByCall ===
 Contributors: 2246636
 Tags: OAuth, LoginByCall, login, call, antibot, antispam, captcha, loginby, loginbycall, login by call, password free, easy login, easy sign in, easy registration, easy sign, 2FA
 Requires at least: 2.8
-Tested up to: 4.8.3
-Stable tag: 4.05
+Tested up to: 4.9.4
+Stable tag: 4.07
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,10 @@ RU: [Здесь](https://github.com/LoginByCall/LoginByCall_workpiece/blob/maste
 
 = 4.05 =
 * October 28, 2017 readme file updated.
+
+= 4.07 =
+* March 19, 2018 little bug fix.
+
 
 == Arbitrary section ==
 
