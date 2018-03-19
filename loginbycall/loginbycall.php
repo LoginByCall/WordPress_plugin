@@ -447,6 +447,12 @@ function loginbycall_is_unique_phone($phone)
     return true;
 }
 
+function loginbycall_delete_user_meta()
+{
+    global $wpdb;
+    $wpdb->get_results("DELETE FROM " . $wpdb->prefix . "usermeta WHERE meta_key = 'loginbycall_user_phone' OR meta_key = 'loginbycall_user_active' OR meta_key = 'loginbycall_user_login_type' OR meta_key = 'loginbycall_user_activate_setting' OR meta_key = 'loginbycall_user_refuse'");
+}
+
 
 add_action('wp_enqueue_scripts', 'prefix_add_my_stylesheet');
 
@@ -670,6 +676,7 @@ function loginbycall_uninstall_hook()
     delete_option('loginbycall_new_api_id');
     delete_option('loginbycall_notification_email');
     delete_option('loginbycall_register_phone');
+    loginbycall_delete_user_meta();
     loginbycall_update_roles(array('_onefactor', '_twofactor'));
 }
 
