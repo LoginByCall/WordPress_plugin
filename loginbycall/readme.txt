@@ -1,9 +1,9 @@
-﻿=== LoginByCall ===
+=== LoginByCall ===
 Contributors: 2246636
 Tags: OAuth, LoginByCall, login, call, antibot, antispam, captcha, loginby, loginbycall, login by call, password free, easy login, easy sign in, easy registration, easy sign, 2FA
 Requires at least: 2.8
-Tested up to: 4.9.4
-Stable tag: 4.07
+Tested up to: 4.9.8
+Stable tag: 4.12
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,7 +11,7 @@ A plugin to allow easy sign-up and sign-in on WordPress using your cell phone.
 
 == Description ==
 
-= LoginByCall is a service which enables automatic user authentication via a mobile phone. =
+= LoginByCall is a service which enables easy user authentication via a mobile phone. =
 
 From the user side, the process of signing up and logging in is performed within
 **TWO EASY STEPS** :
@@ -21,16 +21,15 @@ From the user side, the process of signing up and logging in is performed within
 
 When signing in or logging in for the first time, the user will be confirm the right to use the mobile number they specified.
 
-= The service allocates 1000 coins for each domain for a trial. =
+= The service is free =
 
-= Geographic availability =
+= Geographic availability over 140 country =
 
 **WARNING!**
 
 The service is available in all countries, but some countries do not miss caller ID.
 
 Before using the service, check the caller ID [here](http://loginbycall.com/wp-login.php?action=register)
-and read the tariffs [here](http://loginbycall.com/price/)
 
 **Why the [LoginByCall Service](http://loginbycall.com) may interest my users?**
 - Your users will be pleasantly surprised by the features of a simple sign-up and sign-in to your site.
@@ -49,10 +48,7 @@ The service LoginByCall won the battle of startups 2015 from ESET.
 Please tell your opinion about the plugin:
 
 = Facebook: =
-[https://www.facebook.com/577948475623547](https://www.facebook.com/577948475623547)
-
-= VK.com: =
-[http://vk.com/1loginbycall](http://vk.com/1loginbycall)
+[https://www.facebook.com/hopscorp](https://www.facebook.com/hopscorp)
 
 == Installation ==
 
@@ -62,6 +58,7 @@ Not yet. It's easy.
 
 = LoginByCall API Documentation =
 
+Documentation for self-integration
 EN: [here](https://github.com/LoginByCall/LoginByCall_workpiece/blob/master/README.md)
 RU: [Здесь](https://github.com/LoginByCall/LoginByCall_workpiece/blob/master/README2.md)
 
@@ -123,6 +120,11 @@ RU: [Здесь](https://github.com/LoginByCall/LoginByCall_workpiece/blob/maste
 = 4.07 =
 * March 19, 2018 little bug fix.
 
+= 4.10 =
+* August 03, 2018 translate update.
+
+= 4.12 =
+* August 03, 2018 new WP version tested.
 
 == Arbitrary section ==
 

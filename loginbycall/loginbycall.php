@@ -4,7 +4,7 @@
   Plugin Name: LoginByCall
   Plugin URI: https://wordpress.org/plugins/loginbycall/
   Description: LoginByCall - easy sign-in & sign-up with call on your phone
-  Version: 4.07
+  Version: 4.12
   Author: 2246636
   Author URI: http://LoginByCall.com
  */
