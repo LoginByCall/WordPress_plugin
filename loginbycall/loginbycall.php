@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /*
   Plugin Name: LoginByCall
@@ -35,7 +35,7 @@ function loginbycall_options_page()
     loginbycall_change_options();
 }
 
-//редактированние настроек loginbycall
+//loginbycall settings
 function loginbycall_change_options()
 {
 
@@ -64,7 +64,7 @@ function loginbycall_change_options()
         else
             $loginbycall_register_phone = 0;
 
-        //если нет факторов для ролей и включено обязательный тел
+        //attempt to enable the LoginByCall option when the roles are disabled
         if (loginbycall_update_roles(array('_onefactor', '_twofactor'), $loginbycall_register_phone)) {
             $error = '<div class="notice notice-error"><p>' . __('Specify at least one authorization method for each role', 'loginbycall') . '</p></div>';
         } else
@@ -74,7 +74,7 @@ function loginbycall_change_options()
     }
 
 
-    //рендер формы настроек LoginByCall
+    //Render the form settings LoginByCall
     if (isset($_POST['loginbycall_pay_btn'])) {
         echo pay_loginbycall($_POST['pay']);
     } else
@@ -115,12 +115,12 @@ function render_settings_loginbycall($error)
 			</tr>
 			<tr>
 			<th>'.__('Top up', 'loginbycall').'</th>
-			<td width="300"><input name="pay" value="10000">  <br><span class="description">'.__('Enter amount', 'loginbycall').'</span></td>
+			<td width="300"><input name="pay" value="10000">  <br><span class="description">'.__('Enter amount in LBC credits. 1 USD = 10.000 credits', 'loginbycall').'</span></td>
 			<td style="vertical-align:top;"><input type="submit" name="loginbycall_pay_btn" class="button button-primary" value="'.__('Proceed', 'loginbycall').'" /></td>
 			<td></td>
 			</tr>
 			<tr>
-			<th><label>'.__('Balance notificationsusers', 'loginbycall').'</label></th>
+			<th><label>'.__('Balance notifications', 'loginbycall').'</label></th>
 			<td>
 			<div style="float:left"><input id="js_email_note" name="email_notification" value="' . getNotificationEmail() . '"><br><span class="description">'.__('E-mail for notification', 'loginbycall').'</span></div>
 			</td>
@@ -245,7 +245,8 @@ function loginbycall_render_login_types($user, $olduser = false)
     $allow = loginbycall_check_allowed_role($user->roles);
     $type = get_user_meta($user->ID, 'loginbycall_user_login_type', true);
 
-    //если доступен только 1 способ он должен быть отмечен, если у юзера нет типа то первый доступный способ
+    //If only one authorization method is available to the user, then it must be marked.
+    //If the user does not have a choice, the first available method.
     if ($type == false) {
         if ($allow['_onefactor'])
             $type = 1;
@@ -414,7 +415,7 @@ function loginbycall_save_extra_profile_fields($user_id)
 }
 
 
-//инсталяция плагина - создание тапблици и с страниц для работы loginbycall
+//plugin installation, creating tables and pages for loginbycall
 function loginbycall_install()
 {
 
@@ -423,7 +424,7 @@ function loginbycall_install()
 }
 
 
-//хук срабатываюший при перезагрузки страници
+//The hook triggered when the page reloads
 function loginbycall_run()
 {
     load_plugin_textdomain('loginbycall', false, basename(__DIR__) . '/i18n');
@@ -431,9 +432,9 @@ function loginbycall_run()
 
 
 /**
- * Проверяет, есть ли уже созданный юзер с таким номером телефона
+ * Checks, there is a registered user with this phone number
  * @param $phone
- * @return mixed если юзер найден false, иначе true
+ * @return mixed if the user is found false, else true
  */
 function loginbycall_is_unique_phone($phone)
 {
@@ -485,7 +486,7 @@ function cp_admin_init()
     }
 }
 
-function loginbycall_login_panel_step1()//подключение если нету Для старых юзеров
+function loginbycall_login_panel_step1()//connection for registered users
 {
     $allow = false;
     if (isset($_SESSION['loginbycall_user_login_id'])) {
@@ -544,8 +545,9 @@ function render_pin_form($fuser, $phone)
     $allow = loginbycall_check_allowed_role($fuser->roles);
     if (in_array(true, $allow)) {
 
-        //звонить только если время вышло, если ввели неправильно звонить не надо, но маску выводить
-        //если лимиты вышли позвонить, чтобы попасть на главную с ошибкой
+        //If the time has come to allow a second call.
+	//If the PIN is entered incorrectly it is not necessary to call, but to show a mask.
+        //If the limits have expired - send to the main page with an error.
 
         $phoneCall = call_loginbycall($phone);
         if (lbc_get_safe($phoneCall, 'reason') != '') {
@@ -564,7 +566,7 @@ function render_pin_form($fuser, $phone)
                 die();
             }
 
-        } else//все ок звонок пошел
+        } else//call initiated
         {
             $_SESSION['call'] = lbc_get_safe($phoneCall, 'call');
             $_SESSION['loginbycall_count_login'] = 0;
@@ -618,7 +620,7 @@ function render_pin_form($fuser, $phone)
 }
 
 
-//тут обращение к апи по номеру телефона и делаем прозвон
+//Request to api by phone number and initiate a call
 function loginbycall_login_panel_step2()
 {
 
@@ -633,9 +635,7 @@ function loginbycall_login_panel_step2()
 }
 
 function loginbycall_change_wplogin_title() {
-    return '<p class="message register">'.__('Авторизация LoginByCall не требует запоминания паролей.
-Вам поступит звонок со случайного номера и
-надо будет указать его последние 4 цифры.', 'loginbycall').'</p>';
+    return '<p class="message register">'.__('LoginByCall is calling you. Enter 4 last digits of the incoming number.', 'loginbycall').'</p>';
 }
 
 function loginbycall_filter_gettext( $translated, $original, $domain ) {
@@ -651,7 +651,7 @@ if($action=='register')
     add_filter('login_message', 'loginbycall_change_wplogin_title');
 elseif($action=='login')
     add_filter( 'gettext', 'loginbycall_filter_gettext', 10, 3 );
-function loginbycall_form_panel()//при регистрации
+function loginbycall_form_panel()//for new user registration case
 {
 
 
@@ -711,7 +711,7 @@ add_action('init', 'loginbycall_run');
 add_action('user_register', 'loginbycall_registration_save', 10, 1);
 
 
-//вызов логина урл для проверки
+//call login URL for verification
 add_action('wp_ajax_nopriv_verify_logincall', 'verify_logincall');
 add_action('wp_ajax_verify_logincall', 'verify_logincall');
 function verify_logincall()
@@ -814,15 +814,15 @@ add_filter('authenticate', 'loginbycall_auth_signon', 10, 3);
 
 function loginbycall_auth_signon($user, $username, $password)
 {
-    //если уже раз прошли форму авторизации
+    //if user have already passed the authorization form
     if (isset($_SESSION['loginbycall_user_login_id']) && is_numeric($_SESSION['loginbycall_user_login_id'])) {
         $user_id = $_SESSION['loginbycall_user_login_id'];
     }
 
-    //попадаем сюда с формы для уже зареганых юзеров без телефона, а так же проверяем от двухфакторной авторизации сессия
+    //we get here from the form for already registered users without a phone, as well as check the session for two-factor authentication
     if (isset($_REQUEST['step1_form']) && $_REQUEST['step1_form'] == 1 && isset($user_id) && isset($_SESSION['loginbycall_user_login_id_safe']) && $_SESSION['loginbycall_user_login_id_safe']) {
-        //если отказался или телефон пустой то мы логиним по обычному
-        //отказаться можно только если нет обязаловки и не отказывались раньше
+        //if refused or the phone is not specified, then login by password
+        //You can refuse if there is no demand and did not refuse earlier
         if (((isset($_REQUEST['loginbycall_user_refuse']) && $_REQUEST['loginbycall_user_refuse'] == 1) || $_REQUEST['loginbycall_phone'] == '') &&
             get_option('loginbycall_register_phone') != 1 && get_user_meta($user_id, 'loginbycall_user_refuse', true) != 1
         ) {
@@ -835,7 +835,7 @@ function loginbycall_auth_signon($user, $username, $password)
             $fuser = get_user_by('id', $user_id);
 
             if (!loginbycall_is_unique_phone($_POST['loginbycall_phone'])) {
-                $_SESSION['loginbycall_error'] = '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': This cell phone is already registered.');
+                $_SESSION['loginbycall_error'] = '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': This phone is already registered.');
                 wp_safe_redirect('wp-login.php?loginbycall_step=1');
                 die();
             }
@@ -849,7 +849,7 @@ function loginbycall_auth_signon($user, $username, $password)
         }
     }
 
-    if (!empty($username))//если сессия пуста то нам надо понять стоить давать ошибку или пропускать юзера дальше
+    if (!empty($username))//If the session is empty, then we find the user or exit by mistake
     {
         if (is_email($username))
             $find = 'email';
@@ -857,10 +857,11 @@ function loginbycall_auth_signon($user, $username, $password)
             $find = 'login';
         $fuser = get_user_by($find, $username);
 
-        if ($fuser&&$password=='')//если юзер найден и пароль пустой то пускаем дальше
+        if ($fuser&&$password=='')//if the user is found and the password is empty then let's continue
         {
             $allow = loginbycall_check_allowed_role($fuser->roles);
-            //если однофакторный, есть доступ, не отказался,статус сервера ок то идем то авторизация по моб
+            //if there is one-factor authorization, the user has access, he did not refuse and the status of the server is ok,
+	    //then initiate loginbycall authorization
             if (get_user_meta($fuser->ID, 'loginbycall_user_login_type', true) == 1 && $allow['_onefactor']  && server_status() == 1&&get_user_meta($fuser->ID, 'loginbycall_user_activate_setting', true)==1) {
                 $_SESSION['loginbycall_user_login_id'] = $fuser->ID;
                 $_SESSION['loginbycall_user_login_id_safe'] = false;
@@ -872,17 +873,16 @@ function loginbycall_auth_signon($user, $username, $password)
                     die();
                 }
             }
-        }//идем проверять пароль
+        }//go to password check
     }
 
     return $user;
 }
 
-//здесь проверям однуфакторную или двухфакторную авторизацию
-//сюда пустой пароль не доходит
+//checks one-factor or two-factor authorization
 function loginbycall_check_password($check, $password, $hash, $user_id)
 {
-    //если отказался и не стоит обязательного тела то проходим авторизацию
+    //success, if refused and there is no requirement for LoginByCall
     if (get_user_meta($user_id, 'loginbycall_user_refuse', true) == 1 &&get_user_meta($user_id, 'loginbycall_user_activate_setting', true) != 1)//если юзер отказался то обычная проверки
         return $check;
 
@@ -890,18 +890,18 @@ function loginbycall_check_password($check, $password, $hash, $user_id)
     if($user)
     {
         $allow = loginbycall_check_allowed_role($user->roles);
-        //если у нас однофакторная то логинимся по обычном на код не идем
+        //authorization if one-factor
         if($allow['_onefactor']&&$check&&get_user_meta($user->ID, 'loginbycall_user_login_type', true) == 1)
             return $check;
 
-        //пароль прошел и двухфакторная или однофакторная
+        //authorization if the password is two-factor or if one-factor
         if ((($check&&$allow['_twofactor'])||$allow['_onefactor']) && server_status() == 1) {
             $_SESSION['loginbycall_user_login_id'] = $user_id;
             $_SESSION['loginbycall_user_login_id_safe'] = true;
             if (isset($_SESSION['loginbycall_mask_check']))
                 unset($_SESSION['loginbycall_mask_check']);
 
-            //если телефон не забит, то надо предложить его забить
+            //check that the phone is entered
 
             if (!is_numeric(get_user_meta($user_id, 'loginbycall_user_phone', true))) {
                 wp_safe_redirect('wp-login.php?loginbycall_step=1');
@@ -925,7 +925,7 @@ function loginbycall_phone_check($errors, $sanitized_user_login, $user_email)
     if (get_option('loginbycall_register_phone') == 1 && $_POST['loginbycall_user_phone'] == '') {
         $errors->add('zipcode_error', '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': Enter your cell number', 'loginbycall'));
     } elseif (strlen($_POST['loginbycall_user_phone']) > 0 && !loginbycall_is_unique_phone($_POST['loginbycall_user_phone'])) {
-        $errors->add('zipcode_error', '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': This cell phone is already registered.', 'loginbycall'));
+        $errors->add('zipcode_error', '<strong>'.__('ERROR', 'loginbycall').'</strong>'.__(': This phone is already registered.', 'loginbycall'));
     }
     return $errors;
 }
@@ -939,7 +939,7 @@ function loginbycall_registration_save($user_id)
         update_user_meta($user_id, 'loginbycall_user_phone', $_POST['loginbycall_user_phone']);
         if (($_POST['loginbycall_user_phone']) != '') {
             update_user_meta($user_id, 'loginbycall_user_activate_setting', 1);
-            update_user_meta($user_id, 'loginbycall_user_active', 0);//активируеться при успешном логине
+            update_user_meta($user_id, 'loginbycall_user_active', 0);//activated if successful login
             wp_schedule_single_event(time() + 60 * 60 * 24, 'loginbycall_delete_users', array($user_id));
         }
 
