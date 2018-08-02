@@ -12,158 +12,205 @@ msgstr ""
 "X-Generator: Poedit 2.0.3\n"
 "Language: ru_RU\n"
 
-#: loginbycall.module:285
-msgid "LoginByCall User"
-msgstr "Пользователь LoginByCall"
-
-#: loginbycall:51
-msgid "Settings"
-msgstr "Настройки"
-
-#: loginbycall.module:*
-msgid "LoginByCall"
-msgstr "LoginByCall"
-
-#: loginbycall.php:305 loginbycall.php:370
-msgid "You are not allowed to access this page."
-msgstr "У вас нет доступа к этой странице."
-
-#: loginbycall.php:86
-msgid "My settings LoginByCall"
-msgstr "Мои настройки LoginByCall"
-
-#: loginbycall.php:46
-msgid "Enter your api key. To reissue the key, deactivate and reactivate the plugin."
-msgstr "Введите ваш api_key. Для перевыпуска ключа деактивируйте и снова активируйте плагин."
-
-msgid "One-factor authorization"
-msgstr "Однофакторная авторизация"
-
-msgid "Two-factor authorization"
-msgstr "Двухфакторная авторизация"
-
-msgid "LoginByCall settings"
-msgstr "Настройки простой авторизации «LoginByCall»"
-
-msgid "Enable LoginByCall"
-msgstr "Подключить простую авторизацию LoginByCall"
-
-msgid "Phone w/o \"+\" (1234567890)"
-msgstr "Телефон в международном формате без \"+\""
-
-msgid "LoginByCall mode"
-msgstr "Режим LoginByCall"
-
-msgid "Don't offer any more"
-msgstr "Больше не предлагать"
-
-msgid "Your cell number"
-msgstr "Ваш номер"
-
-msgid "LoginByCall is calling you. Enter 4 last digits of the incoming number."
-msgstr "Введите последние 4 цифры номера с которого мы вам звоним"
-
-msgid "Repeat after"
-msgstr "Повторить через"
-
+#: loginbycall.php:69
 msgid "Specify at least one authorization method for each role"
 msgstr "Укажите хотя бы один способ авторизации для каждой роли"
 
+#: loginbycall.php:99
 msgid "Missing API-key"
-msgstr "Ключи не активны"
+msgstr "Ключ не указан"
 
+#: loginbycall.php:103
+msgid "API-key"
+msgstr "API-key"
+
+#: loginbycall.php:104
+msgid "Enter your api key. To reissue the key, deactivate and reactivate the plugin."
+msgstr "Введите ваш api_key. Для перевыпуска ключа деактивируйте и снова активируйте плагин."
+
+#: loginbycall.php:105
 msgid "Activate"
 msgstr "Подтвердить ключ"
 
+#: loginbycall.php:109
 msgid "Balance LoginByCall"
 msgstr "Баланс LoginByCall"
 
+#: loginbycall.php:114
 msgid "View Rates"
 msgstr "Тарифы"
 
+#: loginbycall.php:117
 msgid "Top up"
 msgstr "Пополнить баланс"
 
-msgid "Enter amount in LBC credits (1 USD = 10.000 credits)"
-msgstr "Укажите сумму пополнения в LBC кредитах (1 USD = 10.000 кредитов)"
+#: loginbycall.php:118
+msgid "Enter amount in LBC credits. 1 USD = 10.000 credits"
+msgstr "Укажите сумму пополнения в LBC кредитах. 1 USD = 10.000 кредитов"
 
+#: loginbycall.php:119
 msgid "Proceed"
 msgstr "Пополнить баланс"
 
+#: loginbycall.php:123
 msgid "Balance notifications"
 msgstr "Уведомления о снижении баланса"
 
+#: loginbycall.php:125
 msgid "E-mail for notification"
 msgstr "E-mail для уведомлений"
 
+#: loginbycall.php:128
 msgid "Notify if balance is less"
 msgstr "Уведомлять при балансе менее"
 
+#: loginbycall.php:140
 msgid "LoginByCall required"
 msgstr "Обязательное использование LoginByCall для пользователей"
 
+#: loginbycall.php:146
 msgid "Role settings"
 msgstr "Настройки по ролям"
 
+#: loginbycall.php:148
 msgid "Allow One-factor authorization"
 msgstr "Разрешить однофакторную авторизацию"
 
+#: loginbycall.php:149
 msgid "Allow Two-factor authorization"
 msgstr "Разрешить двухфакторную авторизацию"
 
+#: loginbycall.php:165
 msgid "Reset \"No longer offer\" flag for all users"
 msgstr "Сбросить флаг \"Больше не предлагать\" для всех пользователей"
 
+#: loginbycall.php:166
 msgid "Reset"
 msgstr "Сбросить"
 
+#: loginbycall.php:178
 msgid "Attention!"
 msgstr "Обратите внимание!"
 
+#: loginbycall.php:179
 msgid "When the domain administrator's email is changed, api_key is reissued. New api-key will come to the email."
 msgstr "При смене email администратора домена происходит перевыпуск api_key. Новый api-key придет на почту."
 
+#: loginbycall.php:180
 msgid "Don't forget to update the api-key"
 msgstr "Не забудьте обновить ключи сервиса"
+
+#: loginbycall.php:266
+msgid "One-factor authorization"
+msgstr "Однофакторная авторизация"
+
+#: loginbycall.php:279
+msgid "Two-factor authorization"
+msgstr "Двухфакторная авторизация"
+
+#: loginbycall.php:505
+msgid "Allow the simple login method LoginByСall for your account"
+msgstr "Подключите простой способ входа «LoginByСall» для вашего аккаунта"
+
+#: loginbycall.php:314,507,657
+msgid "Phone"
+msgstr "Телефон"
+
+#: loginbycall.php:514
+msgid "We will call you from a random number,"
+msgstr "Мы позвоним вам со случайного номера, запомните последние"
+
+#: loginbycall.php:515
+msgid "remember the last 4 digits from it."
+msgstr "4 цифры из него."
+
+#: loginbycall.php:519
+msgid "Select LoginByCall mode"
+msgstr "Выберите способ авторизации"
+
+#: loginbycall.php:526
+msgid "Don't offer any more"
+msgstr "Больше не предлагать"
+
+#: loginbycall.php:560,592
+msgid "Repeat after"
+msgstr "Повторить через"
+
+#: loginbycall.php:560,592
+msgid "seconds"
+msgstr "секунд"
+
+#: loginbycall.php:589,636
+msgid "LoginByCall is calling you. Enter 4 last digits of the incoming number."
+msgstr "Введите последние 4 цифры номера с которого мы вам звоним."
+
+#: loginbycall.php:642
+msgid "Password or leave field blank"
+msgstr "Пароль или оставьте пустым для входа по LoginByCall"
+
+#: loginbycall.php:665
+msgid "Select LoginByCall mode"
+msgstr "Выберите способ входа"
+
+#: loginbycall.php:672
+msgid "You can change the settings in your profile"
+msgstr "Вы можете изменить настройки в профиле"
+
+#: loginbycall.php:733
+msgid "Call completed"
+msgstr "Звонок завершен"
+
+#: loginbycall.php:735
+msgid "Ringing..."
+msgstr "Звонок совершается"
+
+#: loginbycall.php:761,792,836,924,926
+msgid "Error"
+msgstr "Ошибка"
+
+#: loginbycall.php:761
+msgid ": Maximum number of retries exceeded."
+msgstr ": Количество попыток исчерпано"
+
+#: loginbycall.php:761
+msgid ": Phone not accepted."
+msgstr ": Телефон не подтверждён"
+
+#: loginbycall.php:836,926
+msgid ": This phone is already registered."
+msgstr ": Телефон уже занят."
+
+#: loginbycall.php:924
+msgid ": Enter your cell number"
+msgstr ": Телефон должен быть заполнен."
+
+
+#: loginbycall.php:298
+msgid "LoginByCall settings"
+msgstr "Настройки LoginByCall"
+
+#: loginbycall.php:302
+msgid "Enable LoginByCall"
+msgstr "Подключить простую авторизацию LoginByCall"
+
+#: loginbycall.php:326
+msgid "LoginByCall mode"
+msgstr "Режим LoginByCall"
+
+#: loginbycall.php:576
+msgid "Your cell number"
+msgstr "Ваш телефон"
+
+#: loginbycall.php:341,348
+msgid "Confirm"
+msgstr "Подтверждение"
+
 
 msgid "Warning!"
 msgstr "Предупреждение"
 
-msgid "Confirm"
-msgstr "Подтверждение"
+msgid "Phone w/o \"+\" (1234567890)"
+msgstr "Телефон в международном формате без \"+\""
 
-msgid "Allow the simple login method LoginByСall for your account"
-msgstr "Подключите простой способ входа «LoginByСall» для вашего аккаунта"
-
-msgid "We will call you from a random number,"
-msgstr "Мы позвоним вам со случайного номера, запомните последние"
-
-msgid "remember the last 4 digits from it."
-msgstr "4 цифры из него."
-
-msgid "Select LoginByCall mode"
-msgstr "Выберите способ авторизации"
-
-msgid "seconds"
-msgstr "секунд"
-
-msgid "You can change the settings in your profile"
-msgstr "Вы можете изменить настройки в профиле"
-
-msgid "Call completed"
-msgstr "Звонок завершен"
-
-msgid "Ringing..."
-msgstr "Звонок совершается"
-
-msgid "Error"
-msgstr "ОШИБК"
-
-msgid ": This cell phone is already registered."
-msgstr ": Телефон уже занят."
-
-msgid ": Enter your cell number"
-msgstr ": Телефон должен быть заполнен."
-
-msgid "Password or leave field blank"
-msgstr "Password или оставьте пустым для входа по LoginByCall"
+msgid ""
+msgstr ""
