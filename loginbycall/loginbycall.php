@@ -633,9 +633,9 @@ function loginbycall_login_panel_step2()
 }
 
 function loginbycall_change_wplogin_title() {
-    return '<p class="message register">Авторизация LoginByCall не требует запоминания паролей.
+    return '<p class="message register">'.__('Авторизация LoginByCall не требует запоминания паролей.
 Вам поступит звонок со случайного номера и
-надо будет указать его последние 4 цифры.</p>';
+надо будет указать его последние 4 цифры.', 'loginbycall').'</p>';
 }
 
 function loginbycall_filter_gettext( $translated, $original, $domain ) {
