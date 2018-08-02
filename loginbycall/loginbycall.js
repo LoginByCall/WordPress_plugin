@@ -1,5 +1,5 @@
 jQuery(document).ready(function () {
-    //вес код нужен только при определении счетчика
+    //all this code is needed only to process the countdown timer when LoginByCall calling
     if (typeof _countDown !== 'undefined')
     {
 
@@ -41,10 +41,10 @@ jQuery(document).ready(function () {
             var seconds = countDown - Math.floor(diff / 1000);
             if (seconds <= 0) {
                 clearInterval(counter);
-                document.getElementById('countdowntext').innerHTML = '<a class=\"button-recall\" href=\"?loginbycall_step=2\">Повторить звонок</a>';
+                document.getElementById('countdowntext').innerHTML = '<a class=\"button-recall\" href=\"?loginbycall_step=2\">Repeat call</a>';
             } else {
-                document.getElementById('countdowntext').innerHTML = 'Повторить звонок через <span>'
-                + seconds + '</span>&nbsp;секунд';
+                document.getElementById('countdowntext').innerHTML = 'Repeat call after <span>'
+                + seconds + '</span>&nbsp;seconds';
             }
         }
 
