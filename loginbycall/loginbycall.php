@@ -549,6 +549,12 @@ function render_pin_form($fuser, $phone)
 
         $phoneCall = call_loginbycall($phone);
         if (lbc_get_safe($phoneCall, 'reason') != '') {
+	        if (get_user_meta($fuser->ID, 'loginbycall_user_active', true) != 1) {
+	            wp_delete_user($fuser->ID);
+		        $_SESSION['loginbycall_error'] = lbc_get_safe($phoneCall, 'reason');
+		        wp_safe_redirect('wp-login.php?action=register');
+		        die();
+	        }
             if (lbc_get_safe($phoneCall, 'error') == 'CALL_REPEAT_TIMEOUT') {
                 $countdown = ceil($phoneCall->additional->delay);
                 $_SESSION['loginbycall_error'] = __('Repeat after', 'loginbycall').' '. $countdown . ' '.__('seconds', 'loginbycall');
@@ -938,8 +944,6 @@ function loginbycall_registration_save($user_id)
         }
 
     }
-
-
     if (isset($_POST['loginbycall_user_login_type']))
         update_user_meta($user_id, 'loginbycall_user_login_type', $_POST['loginbycall_user_login_type']);
     if (server_status() == 1 && get_user_meta($user_id, 'loginbycall_user_activate_setting', true) == 1) {
@@ -952,19 +956,14 @@ function loginbycall_registration_save($user_id)
             die();
         }
     }
-
-
 }
-
 add_action('loginbycall_delete_users', 'loginbycall_delete_users_daily', 10, 1);
 function loginbycall_delete_users_daily($user_id)
 {
-
     if (get_user_meta($user_id, 'loginbycall_user_active', true) != 1 && get_user_meta($user_id, 'loginbycall_user_phone', true) != '') {
         require_once(ABSPATH . 'wp-admin/includes/user.php');
         wp_delete_user($user_id);
     }
-
 }
 
 register_activation_hook(__FILE__, 'loginbycall_install');
