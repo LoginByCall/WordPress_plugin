@@ -124,10 +124,6 @@ msgstr "Мы позвоним вам со случайного номера, з�
 msgid "remember the last 4 digits from it."
 msgstr "4 цифры из него."
 
-#: loginbycall.php:519
-msgid "Select LoginByCall mode"
-msgstr "Выберите способ авторизации"
-
 #: loginbycall.php:526
 msgid "Don't offer any more"
 msgstr "Больше не предлагать"
@@ -148,7 +144,7 @@ msgstr "Введите последние 4 цифры номера с кото�
 msgid "Password or leave field blank"
 msgstr "Пароль или оставьте пустым для входа по LoginByCall"
 
-#: loginbycall.php:665
+#: loginbycall.php:519,665
 msgid "Select LoginByCall mode"
 msgstr "Выберите способ входа"
 
