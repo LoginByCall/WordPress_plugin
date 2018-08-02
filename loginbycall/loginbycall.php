@@ -163,7 +163,7 @@ function render_settings_loginbycall($error)
     <?php endforeach;
     echo '<tr>
             <th>'.__('Reset "No longer offer" flag for all users', 'loginbycall').'</th>
-            <td><input type="submit" name="loginbycall_reset_flag_refuse" class="button button-primary" value="сбросить"></td>
+            <td><input type="submit" name="loginbycall_reset_flag_refuse" class="button button-primary" value="'.__('Reset', 'loginbycall').'"></td>
             <td></td>
             <td></td>
         </tr>
